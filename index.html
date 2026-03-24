@@ -619,12 +619,16 @@ function setSyncStatus(state,msg){
 }
 
 async function loadS(){
-  // Load localStorage immediately for instant render
-  try{
-    const d=localStorage.getItem(LS_KEY);
-    if(d){const p=JSON.parse(d);S={...mkState(),...p};}
-  }catch(e){}
-  if(!isConfigured()){setSyncStatus('off','not connected');return;}
+  // Load localStorage for instant first render only if JSONBin not configured
+  if(!isConfigured()){
+    try{
+      const d=localStorage.getItem(LS_KEY);
+      if(d){const p=JSON.parse(d);S={...mkState(),...p};}
+    }catch(e){}
+    setSyncStatus('off','not connected');
+    return;
+  }
+  // Always fetch fresh from JSONBin — never trust local cache
   setSyncStatus('syncing','loading…');
   try{
     const url=jbUrl()+'?t='+Date.now();
