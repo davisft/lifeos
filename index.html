@@ -251,19 +251,19 @@ select.fi-input{cursor:pointer;}
     <div class="pin-dot" id="pd2"></div>
     <div class="pin-dot" id="pd3"></div>
   </div>
-  <div class="pin-pad">
-    <button class="pin-btn" onclick="pinKey('1')">1</button>
-    <button class="pin-btn" onclick="pinKey('2')">2</button>
-    <button class="pin-btn" onclick="pinKey('3')">3</button>
-    <button class="pin-btn" onclick="pinKey('4')">4</button>
-    <button class="pin-btn" onclick="pinKey('5')">5</button>
-    <button class="pin-btn" onclick="pinKey('6')">6</button>
-    <button class="pin-btn" onclick="pinKey('7')">7</button>
-    <button class="pin-btn" onclick="pinKey('8')">8</button>
-    <button class="pin-btn" onclick="pinKey('9')">9</button>
-    <button class="pin-btn" onclick="pinKey('')" style="visibility:hidden"></button>
-    <button class="pin-btn" onclick="pinKey('0')">0</button>
-    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+  <div class="pin-pad" id="pin-pad">
+    <button class="pin-btn" data-k="1">1</button>
+    <button class="pin-btn" data-k="2">2</button>
+    <button class="pin-btn" data-k="3">3</button>
+    <button class="pin-btn" data-k="4">4</button>
+    <button class="pin-btn" data-k="5">5</button>
+    <button class="pin-btn" data-k="6">6</button>
+    <button class="pin-btn" data-k="7">7</button>
+    <button class="pin-btn" data-k="8">8</button>
+    <button class="pin-btn" data-k="9">9</button>
+    <button class="pin-btn" style="visibility:hidden"></button>
+    <button class="pin-btn" data-k="0">0</button>
+    <button class="pin-btn del" id="pin-del">⌫</button>
   </div>
   <div class="pin-err" id="pin-err"></div>
   <div id="pin-set-mode" style="display:none;margin-top:20px;font-size:12px;color:var(--text3);text-align:center;line-height:1.8">
@@ -1321,6 +1321,19 @@ let pinSettingMode=false; // true = setting new PIN, false = verifying
 let pinFirstEntry=''; // stores first entry during PIN setup confirmation
 
 function initPin(){
+  // Wire up pad via event delegation — safe regardless of script order
+  const pad=document.getElementById('pin-pad');
+  if(pad){
+    pad.addEventListener('click',function(e){
+      const btn=e.target.closest('button');
+      if(!btn)return;
+      const k=btn.getAttribute('data-k');
+      if(k!==null) pinKey(k);
+    });
+  }
+  const delBtn=document.getElementById('pin-del');
+  if(delBtn) delBtn.addEventListener('click',pinDel);
+
   const unlocked=localStorage.getItem(PIN_UNLOCKED);
   const hasPin=localStorage.getItem(PIN_KEY);
   if(unlocked==='1'){
