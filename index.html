@@ -162,6 +162,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .e-lo{background:#e8f5e9;color:#2e7d32;}
 .e-me{background:#fff8e1;color:#f57f17;}
 .e-hi{background:#fce4ec;color:#c2185b;}
+.act-edit-btn{font-size:12px;color:var(--text3);opacity:0;margin-left:4px;flex-shrink:0;transition:opacity .12s;}
+.act-row:hover .act-edit-btn{opacity:1;}
 
 /* ── CoS bar ── */
 .cos-bar{border-top:1px solid var(--border);background:var(--surface);padding:10px 24px;flex-shrink:0;}
@@ -394,6 +396,28 @@ select.fi-input{cursor:pointer;}
       <button class="btn btn-out" onclick="closeM('sync-modal')">Cancel</button>
       <button class="btn btn-out" onclick="testSyncUrl()">Test connection</button>
       <button class="btn btn-dark" onclick="saveSyncUrl()">Save & connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Action Modal -->
+<div class="modal-bg" id="edit-action-modal">
+  <div class="modal">
+    <div class="modal-title">Edit Action</div>
+    <div class="fi"><div class="fi-label">What needs to happen?</div><input class="fi-input" id="ea-name" placeholder="Specific, doable next step"></div>
+    <div class="fi-row">
+      <div class="fi"><div class="fi-label">Linked goal (optional)</div><select class="fi-input" id="ea-goal"></select></div>
+      <div class="fi"><div class="fi-label">Life area</div><select class="fi-input" id="ea-area-sel"></select></div>
+    </div>
+    <div class="fi-row">
+      <div class="fi"><div class="fi-label">Due date</div><input class="fi-input" type="date" id="ea-due"></div>
+      <div class="fi"><div class="fi-label">Energy needed</div><select class="fi-input" id="ea-energy"><option value="low">🌱 Low</option><option value="med">⚡ Medium</option><option value="high">🔥 High focus</option></select></div>
+    </div>
+    <div class="fi"><div class="fi-label">Notes</div><input class="fi-input" id="ea-notes" placeholder="Context, links, blockers"></div>
+    <div class="mf">
+      <button class="btn btn-out" style="color:#d93025;border-color:#d93025;margin-right:auto" onclick="deleteAction()">Delete</button>
+      <button class="btn btn-out" onclick="closeM('edit-action-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="saveEditAction()">Save</button>
     </div>
   </div>
 </div>
@@ -902,13 +926,14 @@ function rActs(el,fa,fg){
 
 function aRow(a){
   const ar=ga(a.area),g=gg(a.goal),dc=dcls(a.due);
-  return`<div class="act-row ${a.done?'done':''}" id="act-${a.id}">
+  return`<div class="act-row ${a.done?'done':''}" id="act-${a.id}" onclick="openEditAction('${a.id}',event)">
     <div class="chk" onclick="togAct('${a.id}',event)"><span class="chk-i">✓</span></div>
     <div class="a-adot" style="background:${ar.color}"></div>
     <div class="act-name">${a.name}</div>
     ${g?`<span class="a-gtag" title="${g.title}">${g.title}</span>`:''}
     ${etag(a.energy)}
     ${a.due?`<span class="a-due ${dc}">${dlbl(a.due)}</span>`:''}
+    <span class="act-edit-btn">✎</span>
   </div>`;
 }
 
@@ -1283,6 +1308,50 @@ GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: $
   }catch(err){
     respEl.innerHTML='✦ Agent offline. Try: "What\'s overdue?" or type to add an action.';
   }
+}
+
+// ─── Edit / Delete Action ────────────────────────────────────────
+let editingActionId=null;
+
+function openEditAction(id,e){
+  // Don't open if clicking the checkbox
+  if(e&&e.target.closest('.chk'))return;
+  const a=S.actions.find(x=>x.id===id);
+  if(!a)return;
+  editingActionId=id;
+  document.getElementById('ea-name').value=a.name||'';
+  document.getElementById('ea-due').value=a.due||'';
+  document.getElementById('ea-notes').value=a.notes||'';
+  // Populate goal dropdown
+  const gs=document.getElementById('ea-goal');
+  gs.innerHTML=`<option value="">— No linked goal —</option>`+S.goals.map(g=>`<option value="${g.id}"${a.goal===g.id?' selected':''}>${ga(g.area).emoji} ${g.title}</option>`).join('');
+  // Populate area dropdown
+  const as=document.getElementById('ea-area-sel');
+  as.innerHTML=AREAS.map(ar=>`<option value="${ar.id}"${a.area===ar.id?' selected':''}>${ar.emoji} ${ar.label}</option>`).join('');
+  // Set energy
+  document.getElementById('ea-energy').value=a.energy||'med';
+  openM('edit-action-modal');
+}
+
+function saveEditAction(){
+  const n=document.getElementById('ea-name').value.trim();
+  if(!n)return;
+  const a=S.actions.find(x=>x.id===editingActionId);
+  if(!a)return;
+  const gid=document.getElementById('ea-goal').value;
+  a.name=n;
+  a.goal=gid||null;
+  a.area=document.getElementById('ea-area-sel').value;
+  a.energy=document.getElementById('ea-energy').value;
+  a.due=document.getElementById('ea-due').value;
+  a.notes=document.getElementById('ea-notes').value;
+  saveS();closeM('edit-action-modal');renderSB();render();renderMobile();
+}
+
+function deleteAction(){
+  if(!confirm('Delete this action item?'))return;
+  S.actions=S.actions.filter(x=>x.id!==editingActionId);
+  saveS();closeM('edit-action-modal');renderSB();render();renderMobile();
 }
 
 // ─── Export / Import ──────────────────────────────────────────────
