@@ -21,22 +21,6 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
-
-/* ── PIN Lock ── */
-.pin-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;}
-.pin-screen.hide{display:none;}
-.pin-logo{font-family:'Lora',serif;font-size:22px;font-weight:600;letter-spacing:-0.02em;margin-bottom:4px;}
-.pin-sub{font-size:12px;color:var(--text3);margin-bottom:32px;font-style:italic;font-family:'Lora',serif;}
-.pin-dots{display:flex;gap:14px;margin-bottom:28px;}
-.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border2);transition:all .15s;}
-.pin-dot.filled{background:var(--text);border-color:var(--text);}
-.pin-dot.err{background:#d93025;border-color:#d93025;}
-.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:220px;}
-.pin-btn{height:60px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:20px;font-weight:400;cursor:pointer;transition:all .12s;color:var(--text);}
-.pin-btn:hover{background:var(--surface2);}
-.pin-btn:active{background:var(--surface3);transform:scale(.96);}
-.pin-btn.del{font-size:16px;color:var(--text2);}
-.pin-err{font-size:12px;color:#d93025;margin-top:12px;height:16px;font-family:'DM Mono',monospace;}
 .shell{display:flex;height:100vh;overflow:hidden;}
 
 /* ── Sidebar ── */
@@ -162,8 +146,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .e-lo{background:#e8f5e9;color:#2e7d32;}
 .e-me{background:#fff8e1;color:#f57f17;}
 .e-hi{background:#fce4ec;color:#c2185b;}
-.act-edit-btn{font-size:12px;color:var(--text3);opacity:0;margin-left:4px;flex-shrink:0;transition:opacity .12s;}
-.act-row:hover .act-edit-btn{opacity:1;}
 
 /* ── CoS bar ── */
 .cos-bar{border-top:1px solid var(--border);background:var(--surface);padding:10px 24px;flex-shrink:0;}
@@ -230,6 +212,72 @@ select.fi-input{cursor:pointer;}
 ::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
 ::-webkit-scrollbar-track{background:transparent;}
 
+/* ── Fitness Tab ── */
+.fit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.fit-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 14px;position:relative;overflow:hidden;}
+.fit-stat-top{height:2px;position:absolute;top:0;left:0;right:0;}
+.fit-stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--text);line-height:1;}
+.fit-stat-unit{font-size:11px;color:var(--text3);margin-top:1px;}
+.fit-stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.fit-stat-delta{font-size:10px;font-family:'DM Mono',monospace;margin-top:4px;}
+.fit-stat-delta.pos{color:var(--health);}
+.fit-stat-delta.neg{color:#d93025;}
+
+.wk-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;}
+.wk-day{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 5px;text-align:center;cursor:pointer;transition:all .12s;min-height:72px;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.wk-day:hover{border-color:var(--border2);}
+.wk-day.today-col{border-color:var(--career);border-width:1.5px;}
+.wk-day-name{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:'DM Mono',monospace;}
+.wk-day-date{font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);margin-bottom:2px;}
+.wk-sessions{display:flex;flex-direction:column;gap:2px;width:100%;}
+.wk-sess{font-size:9px;padding:2px 4px;border-radius:3px;text-align:center;cursor:pointer;transition:all .1s;line-height:1.2;}
+.wk-sess.done-s{opacity:.5;text-decoration:line-through;}
+.wk-sess.rest{background:var(--surface2);color:var(--text3);}
+
+.run-prog-table{width:100%;border-collapse:collapse;}
+.run-prog-table th{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:500;padding:5px 8px;text-align:left;border-bottom:1px solid var(--border);}
+.run-prog-table td{font-size:12px;padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;}
+.run-prog-table tr:last-child td{border-bottom:none;}
+.run-prog-table tr.current-wk td{background:rgba(45,190,140,0.06);}
+.run-prog-table tr.done-wk td{opacity:.5;}
+.run-prog-table tr.race-wk td{background:rgba(91,106,245,0.06);}
+.rpt-name{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);}
+
+.comp-log{width:100%;border-collapse:collapse;}
+.comp-log th{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;padding:5px 8px;text-align:left;border-bottom:1px solid var(--border);}
+.comp-log td{font-size:12px;padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;}
+.comp-log tr:first-child td{font-weight:500;}
+.target-row td{color:var(--text3);font-style:italic;}
+
+.hr-zone{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-sm);margin-bottom:4px;}
+.hr-zone-bar{height:6px;border-radius:3px;flex-shrink:0;}
+.hr-zone-name{font-size:12px;font-weight:500;min-width:80px;}
+.hr-zone-range{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);}
+.hr-zone-desc{font-size:11px;color:var(--text3);margin-left:auto;}
+
+.race-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;display:flex;align-items:center;gap:12px;margin-bottom:7px;}
+.race-date-badge{background:var(--surface2);border-radius:8px;padding:6px 10px;text-align:center;flex-shrink:0;min-width:54px;}
+.race-date-mo{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-family:'DM Mono',monospace;}
+.race-date-d{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;line-height:1;}
+.race-name{font-weight:500;font-size:13px;line-height:1.3;}
+.race-dist{font-size:11px;color:var(--text3);margin-top:2px;}
+.race-status{margin-left:auto;font-size:10px;padding:3px 8px;border-radius:10px;font-family:'DM Mono',monospace;white-space:nowrap;}
+.rs-reg{background:rgba(45,190,140,0.12);color:var(--health);}
+.rs-target{background:rgba(91,106,245,0.12);color:var(--career);}
+.rs-stretch{background:rgba(230,184,48,0.12);color:#b8920a;}
+.rs-open{background:var(--surface2);color:var(--text3);}
+
+.wlog-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sess-check{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s;}
+.sess-check:hover{border-color:var(--border2);}
+.sess-check.checked{border-color:var(--health);background:rgba(45,190,140,0.06);}
+.sess-chk-box{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.sess-check.checked .sess-chk-box{background:var(--health);border-color:var(--health);}
+.sess-chk-i{font-size:9px;color:white;display:none;}
+.sess-check.checked .sess-chk-i{display:block;}
+.sess-label{font-size:12px;line-height:1.3;}
+
+
 /* ── Responsive ── */
 @media(max-width:700px){
   .desktop-view{display:none!important;}
@@ -243,37 +291,6 @@ select.fi-input{cursor:pointer;}
 </head>
 <body>
 
-<!-- ══ PIN LOCK ════════════════════════════════════════════════ -->
-<div class="pin-screen" id="pin-screen">
-  <div class="pin-logo">Life OS 2026</div>
-  <div class="pin-sub">"Relaunch Year"</div>
-  <div class="pin-dots">
-    <div class="pin-dot" id="pd0"></div>
-    <div class="pin-dot" id="pd1"></div>
-    <div class="pin-dot" id="pd2"></div>
-    <div class="pin-dot" id="pd3"></div>
-  </div>
-  <div class="pin-pad" id="pin-pad">
-    <button class="pin-btn" onclick="pinKey('1')">1</button>
-    <button class="pin-btn" onclick="pinKey('2')">2</button>
-    <button class="pin-btn" onclick="pinKey('3')">3</button>
-    <button class="pin-btn" onclick="pinKey('4')">4</button>
-    <button class="pin-btn" onclick="pinKey('5')">5</button>
-    <button class="pin-btn" onclick="pinKey('6')">6</button>
-    <button class="pin-btn" onclick="pinKey('7')">7</button>
-    <button class="pin-btn" onclick="pinKey('8')">8</button>
-    <button class="pin-btn" onclick="pinKey('9')">9</button>
-    <button class="pin-btn" style="visibility:hidden"></button>
-    <button class="pin-btn" onclick="pinKey('0')">0</button>
-    <button class="pin-btn del" onclick="pinDel()">⌫</button>
-  </div>
-  <div class="pin-err" id="pin-err"></div>
-  <div id="pin-set-mode" style="display:none;margin-top:20px;font-size:12px;color:var(--text3);text-align:center;line-height:1.8">
-    First time setup — enter a 4-digit PIN<br>
-    <span style="font-size:11px;color:var(--text3)">You\'ll only need this once on each device</span>
-  </div>
-</div>
-
 <!-- ══ DESKTOP ══════════════════════════════════════════════════ -->
 <div class="shell desktop-view">
 <aside class="sidebar">
@@ -286,15 +303,14 @@ select.fi-input{cursor:pointer;}
   <div class="nav-item active" id="nav-dashboard" onclick="go('dashboard')"><span>◉</span>Dashboard</div>
   <div class="nav-item" id="nav-goals" onclick="go('goals')"><span>◎</span>Goals<span class="nav-badge" id="bg-goals">0</span></div>
   <div class="nav-item" id="nav-milestones" onclick="go('milestones')"><span>◈</span>Milestones<span class="nav-badge" id="bg-ms">0</span></div>
-  <div class="nav-item" id="nav-quarterly" onclick="go('quarterly')"><span>◑</span>Quarterly Plan</div>
   <div class="nav-item" id="nav-actions" onclick="go('actions')"><span>◻</span>Actions<span class="nav-badge" id="bg-acts">0</span></div>
+  <div class="nav-item" id="nav-fitness" onclick="go('fitness')"><span>🏃</span>Fitness Tracker</div>
   <div class="nav-item" id="nav-review" onclick="go('review')"><span>◷</span>Weekly Review</div>
   <div class="nav-sec" style="margin-top:10px">Life Areas</div>
   <div id="area-nav"></div>
   <div class="sb-footer">
     <div class="int-row" onclick="go('inbox')"><div class="idot" style="background:var(--health)"></div>Gmail — capture</div>
     <div class="int-row" style="margin-top:4px" onclick="go('calendar')"><div class="idot" style="background:var(--career)"></div>Calendar — plan</div>
-    <div class="int-row" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px" onclick="lockApp()"><div class="idot" style="background:var(--text3)"></div>Lock app</div>
   </div>
 </aside>
 
@@ -304,11 +320,6 @@ select.fi-input{cursor:pointer;}
       <div class="topbar-title" id="view-title">Dashboard</div>
       <div class="topbar-date" id="view-date"></div>
     </div>
-    <div id="sync-status" title="Sync status" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);display:flex;align-items:center;gap:5px;cursor:pointer" onclick="manualSync()">
-      <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;display:inline-block"></span>
-      <span id="sync-label">not connected</span>
-    </div>
-    <button class="btn btn-out btn-sm" onclick="showSyncSetup()" title="Configure Google Sheets sync">⚙ Sync</button>
     <button class="btn btn-out btn-sm" onclick="exportData()" title="Export all data as JSON">↑ Export</button>
     <button class="btn btn-out btn-sm" onclick="importData()" title="Import data from JSON">↓ Import</button>
     <button class="btn btn-out btn-sm" onclick="go('review')">Weekly Review</button>
@@ -350,7 +361,6 @@ select.fi-input{cursor:pointer;}
 <div class="mobile-view">
   <div class="mobile-header">
     <div class="mobile-title" id="m-title">Life OS 2026</div>
-    <span id="m-sync-label" onclick="manualSync()" style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);cursor:pointer;white-space:nowrap"></span>
     <button class="btn btn-dark btn-sm" onclick="openActModal()">+ Add</button>
   </div>
   <div class="mobile-qc">
@@ -367,62 +377,6 @@ select.fi-input{cursor:pointer;}
   </div>
 </div>
 
-<!-- Sync Setup Modal -->
-<div class="modal-bg" id="sync-modal">
-  <div class="modal">
-    <div class="modal-title">⚙ Google Sheets Sync Setup</div>
-    <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">
-      Life OS syncs via <strong>JSONBin.io</strong> — a free cloud JSON store. Setup takes 2 minutes. The Master Key is needed to write data (reads are public).
-    </p>
-    <div style="background:var(--surface2);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:2;color:var(--text2)">
-      <strong style="color:var(--text);font-size:13px">Setup steps:</strong><br>
-      1. Go to <a href="https://jsonbin.io" target="_blank" style="color:var(--career)">jsonbin.io</a> → Sign up free<br>
-      2. Click <strong>Create Bin</strong> → paste <code style="background:var(--surface3);padding:1px 5px;border-radius:3px">{"init":true}</code> → Save<br>
-      3. Copy the <strong>Bin ID</strong> from the URL (long string after /b/)<br>
-      4. Go to <strong>Account → API Keys</strong> → copy your <strong>Master Key</strong> (starts with $2a$10$)<br>
-      5. Paste both below → Test → Save
-    </div>
-    <div class="fi-row">
-      <div class="fi">
-        <div class="fi-label">Bin ID</div>
-        <input class="fi-input" id="jb-bin-id" placeholder="65f3a...c2d" style="font-family:'DM Mono',monospace;font-size:12px">
-      </div>
-      <div class="fi">
-        <div class="fi-label">Master Key (required for writes)</div>
-        <input class="fi-input" id="jb-api-key" placeholder="$2a$10$..." type="password" style="font-family:'DM Mono',monospace;font-size:12px">
-      </div>
-    </div>
-    <div id="sync-test-result" style="font-size:12px;color:var(--health);margin-top:4px;display:none;font-family:'DM Mono',monospace"></div>
-    <div class="mf">
-      <button class="btn btn-out" onclick="closeM('sync-modal')">Cancel</button>
-      <button class="btn btn-out" onclick="testSyncUrl()">Test connection</button>
-      <button class="btn btn-dark" onclick="saveSyncUrl()">Save & connect</button>
-    </div>
-  </div>
-</div>
-
-<!-- Edit Action Modal -->
-<div class="modal-bg" id="edit-action-modal">
-  <div class="modal">
-    <div class="modal-title">Edit Action</div>
-    <div class="fi"><div class="fi-label">What needs to happen?</div><input class="fi-input" id="ea-name" placeholder="Specific, doable next step"></div>
-    <div class="fi-row">
-      <div class="fi"><div class="fi-label">Linked goal (optional)</div><select class="fi-input" id="ea-goal"></select></div>
-      <div class="fi"><div class="fi-label">Life area</div><select class="fi-input" id="ea-area-sel"></select></div>
-    </div>
-    <div class="fi-row">
-      <div class="fi"><div class="fi-label">Due date</div><input class="fi-input" type="date" id="ea-due"></div>
-      <div class="fi"><div class="fi-label">Energy needed</div><select class="fi-input" id="ea-energy"><option value="low">🌱 Low</option><option value="med">⚡ Medium</option><option value="high">🔥 High focus</option></select></div>
-    </div>
-    <div class="fi"><div class="fi-label">Notes</div><input class="fi-input" id="ea-notes" placeholder="Context, links, blockers"></div>
-    <div class="mf">
-      <button class="btn btn-out" style="color:#d93025;border-color:#d93025;margin-right:auto" onclick="deleteAction()">Delete</button>
-      <button class="btn btn-out" onclick="closeM('edit-action-modal')">Cancel</button>
-      <button class="btn btn-dark" onclick="saveEditAction()">Save</button>
-    </div>
-  </div>
-</div>
-
 <!-- Goal Modal -->
 <div class="modal-bg" id="goal-modal">
   <div class="modal">
@@ -436,44 +390,6 @@ select.fi-input{cursor:pointer;}
     </div>
     <div class="fi"><div class="fi-label">How will you measure success?</div><input class="fi-input" id="g-measure" placeholder="Specific, observable outcome"></div>
     <div class="mf"><button class="btn btn-out" onclick="closeM('goal-modal')">Cancel</button><button class="btn btn-dark" onclick="saveGoal()">Save Goal</button></div>
-  </div>
-</div>
-
-<!-- Edit Goal Modal -->
-<div class="modal-bg" id="edit-goal-modal">
-  <div class="modal">
-    <div class="modal-title">Edit Goal</div>
-    <div class="fi"><div class="fi-label">What do you want to achieve?</div><input class="fi-input" id="eg-title" placeholder="e.g. Land a Director PM role"></div>
-    <div class="fi"><div class="fi-label">Life area</div><div class="apicker" id="eg-apicker"></div></div>
-    <div class="fi"><div class="fi-label">Why does this matter?</div><textarea class="fi-input" id="eg-why" placeholder="Your honest reason"></textarea></div>
-    <div class="fi-row">
-      <div class="fi"><div class="fi-label">Horizon</div><select class="fi-input" id="eg-horizon"><option>1 month</option><option>3 months</option><option>6 months</option><option>1 year</option><option>Ongoing</option></select></div>
-      <div class="fi"><div class="fi-label">Target date</div><input class="fi-input" type="date" id="eg-due"></div>
-    </div>
-    <div class="fi"><div class="fi-label">How will you measure success?</div><input class="fi-input" id="eg-measure" placeholder="Specific, observable outcome"></div>
-    <div class="mf">
-      <button class="btn btn-out" style="color:#d93025;border-color:#d93025;margin-right:auto" onclick="deleteGoal()">Delete</button>
-      <button class="btn btn-out" onclick="closeM('edit-goal-modal')">Cancel</button>
-      <button class="btn btn-dark" onclick="saveEditGoal()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- Edit Milestone Modal -->
-<div class="modal-bg" id="edit-ms-modal">
-  <div class="modal">
-    <div class="modal-title" id="edit-ms-title">Edit Milestone</div>
-    <div class="fi"><div class="fi-label">Milestone name</div><input class="fi-input" id="em-name" placeholder="What needs to be true?"></div>
-    <div class="fi-row">
-      <div class="fi"><div class="fi-label">Due date</div><input class="fi-input" type="date" id="em-due"></div>
-      <div class="fi"><div class="fi-label">Life area</div><select class="fi-input" id="em-area"></select></div>
-    </div>
-    <div class="fi"><div class="fi-label">Linked goal</div><select class="fi-input" id="em-goal"></select></div>
-    <div class="mf">
-      <button class="btn btn-out" style="color:#d93025;border-color:#d93025;margin-right:auto" id="em-delete-btn" onclick="deleteMilestone()">Delete</button>
-      <button class="btn btn-out" onclick="closeM('edit-ms-modal')">Cancel</button>
-      <button class="btn btn-dark" onclick="saveEditMs()">Save</button>
-    </div>
   </div>
 </div>
 
@@ -495,16 +411,25 @@ select.fi-input{cursor:pointer;}
   </div>
 </div>
 
+<!-- Body Log Modal -->
+<div class="modal-bg" id="bl-modal">
+  <div class="modal">
+    <div class="modal-title">Log Body Composition</div>
+    <div class="fi"><div class="fi-label">Date</div><input class="fi-input" type="date" id="bl-date"></div>
+    <div class="fi-row">
+      <div class="fi"><div class="fi-label">Weight (lbs)</div><input class="fi-input" type="number" id="bl-weight" placeholder="e.g. 198.5" step="0.1"></div>
+      <div class="fi"><div class="fi-label">Body Fat % (smart scale)</div><input class="fi-input" type="number" id="bl-bf" placeholder="e.g. 25.8" step="0.1"></div>
+    </div>
+    <div class="fi"><div class="fi-label">Waist measurement (inches) — every 2 weeks</div><input class="fi-input" type="number" id="bl-waist" placeholder="e.g. 34.5" step="0.25"></div>
+    <div class="fi"><div class="fi-label">Note (optional)</div><input class="fi-input" id="bl-note" placeholder="e.g. 30-day check-in, post-race, etc."></div>
+    <div style="background:rgba(45,190,140,0.07);border-radius:var(--radius-sm);padding:9px 12px;font-size:11px;color:var(--text2);margin-bottom:12px">
+      ✦ Weigh in every morning — same time, before eating, after bathroom. Log waist every 2 weeks. Smart scale BF% trends matter more than daily precision.
+    </div>
+    <div class="mf"><button class="btn btn-out" onclick="closeM('bl-modal')">Cancel</button><button class="btn btn-dark" onclick="saveBodyLog()">Save Entry</button></div>
+  </div>
+</div>
+
 <script>
-// Global error catcher — helps diagnose silent JS failures
-window.onerror=function(msg,src,line,col,err){
-  const ps=document.getElementById('pin-screen');
-  if(ps&&!ps.classList.contains('hide')){
-    const e=document.getElementById('pin-err');
-    if(e) e.textContent='JS error line '+line+': '+msg.slice(0,60);
-  }
-  return false;
-};
 // ─── Areas ───────────────────────────────────────────────────────
 const AREAS=[
   {id:'career', label:'Career',   emoji:'💼',color:'#5b6af5',soft:'rgba(91,106,245,0.1)'},
@@ -519,178 +444,449 @@ const ga=id=>AREAS.find(a=>a.id===id)||AREAS[0];
 
 // ─── Default State ────────────────────────────────────────────────
 function mkState(){
+  const t=d=>{const x=new Date();x.setDate(x.getDate()+d);return x.toISOString().split('T')[0];};
   return {
     view:'dashboard', mview:'today',
-    goals:[],
-    milestones:[],
-    actions:[],
+    goals:[
+      {id:'g1',title:'Land a Principal PM or Director PM role at a B2B tech platform company',area:'career',why:'Return to work that energizes me — platforms, ecosystems, AI, customer impact.',horizon:'6 months',due:'2026-06-30',measure:'Signed offer letter at a company I\'m genuinely excited about'},
+      {id:'g2',title:'Build credible AI fluency as a product leader through hands-on building',area:'growth',why:'AI is transforming the PM role — I need to lead with it, not catch up to it.',horizon:'1 year',due:'2026-12-31',measure:'3+ AI projects shipped, daily AI workflow, can speak with authority on AI products'},
+      {id:'g3',title:'Rebuild systematic fitness and complete a sprint triathlon',area:'health',why:'Energy, confidence, and proving I can still do hard physical things.',horizon:'6 months',due:'2026-10-01',measure:'Cross a sprint triathlon finish line'},
+      {id:'g4',title:'Protect financial stability and grow long-term wealth through career transition',area:'finance',why:'Financial security changes how I make every other decision.',horizon:'1 year',due:'2026-12-31',measure:'Job landed within 6 months, retirement savings growing, liquid reserves healthy'},
+      {id:'g5',title:'Be fully present for my son\'s last months at home before Cornell',area:'family',why:'He leaves in August — this chapter closes. Be present for it.',horizon:'6 months',due:'2026-08-31',measure:'Meaningful shared experiences completed, strong intentional Cornell send-off'},
+      {id:'g6',title:'Reactivate my network and rebuild a social life outside family',area:'social',why:'Career success depends on it — and all-work-all-family isn\'t sustainable.',horizon:'1 year',due:'2026-12-31',measure:'20+ meaningful reconnections, 3-4 active friendships, weekly social rhythm'},
+    ],
+    milestones:[
+      // Career
+      {id:'m1', goal:'g1',area:'career', name:'Resume finalized — Cisco/AWS platform experience leading',due:'2026-04-07',done:false},
+      {id:'m2', goal:'g1',area:'career', name:'Target company list of 20 B2B platform companies built',due:'2026-04-07',done:false},
+      {id:'m3', goal:'g1',area:'career', name:'Pipeline tracker updated with Status column',due:'2026-03-26',done:false},
+      {id:'m4', goal:'g1',area:'career', name:'15 warm Cisco/AWS contacts reactivated',due:'2026-04-30',done:false},
+      {id:'m5', goal:'g1',area:'career', name:'5+ first screens or recruiter calls completed',due:'2026-04-15',done:false},
+      {id:'m6', goal:'g1',area:'career', name:'3+ companies at hiring manager stage simultaneously',due:'2026-04-30',done:false},
+      {id:'m7', goal:'g1',area:'career', name:'First 3 STAR stories written and reviewed',due:'2026-04-15',done:false},
+      {id:'m8', goal:'g1',area:'career', name:'Full STAR story bank complete — 6-8 stories mapped to LPs',due:'2026-04-30',done:false},
+      {id:'m9', goal:'g1',area:'career', name:'Mock interview completed in Career Advisor Project',due:'2026-05-01',done:false},
+      {id:'m10',goal:'g1',area:'career', name:'3+ companies at final round stage',due:'2026-05-15',done:false},
+      {id:'m11',goal:'g1',area:'career', name:'Offer(s) in hand and evaluating',due:'2026-06-15',done:false},
+      {id:'m12',goal:'g1',area:'career', name:'Offer signed — new role confirmed ✓',due:'2026-06-30',done:false},
+      // Learning
+      {id:'m13',goal:'g2',area:'growth', name:'DeepLearning.AI Course 2 completed (neural networks)',due:'2026-03-29',done:false},
+      {id:'m14',goal:'g2',area:'growth', name:'DeepLearning.AI Course 3 completed — ML Specialization done',due:'2026-04-05',done:false},
+      {id:'m15',goal:'g2',area:'growth', name:'Phase 2 short courses 1-3 completed (prompt eng, LLM APIs, LangChain)',due:'2026-04-12',done:false},
+      {id:'m16',goal:'g2',area:'growth', name:'Phase 2 short courses 4-6 completed (RAG, LangGraph, agents)',due:'2026-04-19',done:false},
+      {id:'m17',goal:'g2',area:'growth', name:'Interview prep AI app v1 built and in use',due:'2026-04-19',done:false},
+      {id:'m18',goal:'g2',area:'growth', name:'Phase 3 deep dives complete — technical AI depth done',due:'2026-04-26',done:false},
+      {id:'m19',goal:'g2',area:'growth', name:'Personal AI narrative and story crafted for interviews',due:'2026-05-03',done:false},
+      {id:'m20',goal:'g2',area:'growth', name:'Claude Project set up with full personal context',due:'2026-04-15',done:false},
+      {id:'m21',goal:'g2',area:'growth', name:'Fantasy baseball AI automation project built',due:'2026-05-15',done:false},
+      {id:'m22',goal:'g2',area:'growth', name:'AI PM toolkit project built (PRD assistant, competitive analysis)',due:'2026-06-15',done:false},
+      {id:'m23',goal:'g2',area:'growth', name:'AI learnings documented — what works, what breaks',due:'2026-09-30',done:false},
+      // Health
+      {id:'m24',goal:'g3',area:'health', name:'Bay to Breakers registered (May 17)',due:'2026-03-25',done:false},
+      {id:'m25',goal:'g3',area:'health', name:'Baseline logged — weight, BF%, waist, tracking sheet set up',due:'2026-03-25',done:false},
+      {id:'m26',goal:'g3',area:'health', name:'Apple Health integrations confirmed — Peloton, scale, Watch syncing',due:'2026-03-26',done:false},
+      {id:'m27',goal:'g3',area:'health', name:'Week 1 training schedule started — 4x/week',due:'2026-03-30',done:false},
+      {id:'m28',goal:'g3',area:'health', name:'30-day body comp check-in — vs. Q2 targets',due:'2026-04-30',done:false},
+      {id:'m29',goal:'g3',area:'health', name:'Bay to Breakers completed 🎽 (12k, May 17)',due:'2026-05-17',done:false},
+      {id:'m30',goal:'g3',area:'health', name:'10k race entered and completed',due:'2026-07-31',done:false},
+      {id:'m31',goal:'g3',area:'health', name:'Sprint triathlon registered — Pacific Grove or Santa Cruz',due:'2026-07-31',done:false},
+      {id:'m32',goal:'g3',area:'health', name:'Q2 body comp check — 190 lbs, 23% BF, 33" waist',due:'2026-06-30',done:false},
+      {id:'m33',goal:'g3',area:'health', name:'Sprint triathlon completed 🏁',due:'2026-10-01',done:false},
+      {id:'m34',goal:'g3',area:'health', name:'Q3 body comp check — 182 lbs, 20% BF, 31" waist',due:'2026-09-30',done:false},
+      // Finance
+      {id:'m35',goal:'g4',area:'finance',name:'2025 IRA contribution made before April 15 deadline',due:'2026-04-14',done:false},
+      {id:'m36',goal:'g4',area:'finance',name:'Cornell 4-year cost model built, budget adjusted',due:'2026-04-30',done:false},
+      {id:'m37',goal:'g4',area:'finance',name:'Monthly burn rate calculated — precise runway known',due:'2026-04-07',done:false},
+      {id:'m38',goal:'g4',area:'finance',name:'Investment portfolio reviewed and rebalanced',due:'2026-04-30',done:false},
+      {id:'m39',goal:'g4',area:'finance',name:'Previous employer 401k accounts audited and consolidated',due:'2026-04-15',done:false},
+      {id:'m40',goal:'g4',area:'finance',name:'Roth IRA conversion analysis completed',due:'2026-06-30',done:false},
+      {id:'m41',goal:'g4',area:'finance',name:'Estate planning initiated — wills, trust, beneficiaries reviewed',due:'2026-09-30',done:false},
+      {id:'m42',goal:'g4',area:'finance',name:'Retirement contributions resumed post-hire',due:'2026-08-01',done:false},
+      {id:'m43',goal:'g4',area:'finance',name:'Investing app expanded with financial dashboard',due:'2026-12-31',done:false},
+      // Family
+      {id:'m44',goal:'g5',area:'family', name:'Spring break Bay Area plan finalized',due:'2026-03-28',done:false},
+      {id:'m45',goal:'g5',area:'family', name:'Alcatraz tickets booked for spring break',due:'2026-03-25',done:false},
+      {id:'m46',goal:'g5',area:'family', name:'Pre-Cornell bucket list conversation with son — his top 10',due:'2026-04-05',done:false},
+      {id:'m47',goal:'g5',area:'family', name:'NYC Thanksgiving hotel booked',due:'2026-03-30',done:false},
+      {id:'m48',goal:'g5',area:'family', name:'Kauai family trip decided and booked',due:'2026-04-30',done:false},
+      {id:'m49',goal:'g5',area:'family', name:'Regular golf with daughter — every other Saturday established',due:'2026-04-01',done:false},
+      {id:'m50',goal:'g5',area:'family', name:'Dallas visit scheduled — specific dates on calendar',due:'2026-04-30',done:false},
+      {id:'m51',goal:'g5',area:'family', name:'Son\'s Bay Area bucket list experiences completed',due:'2026-08-10',done:false},
+      {id:'m52',goal:'g5',area:'family', name:'Kauai family vacation completed',due:'2026-07-31',done:false},
+      {id:'m53',goal:'g5',area:'family', name:'Cornell move-in done intentionally — milestone celebrated 🎓',due:'2026-08-20',done:false},
+      {id:'m54',goal:'g5',area:'family', name:'Tahoe ski trip Dec 26-30 booked',due:'2026-05-01',done:false},
+      // Social
+      {id:'m55',goal:'g6',area:'social', name:'Top-30 network map built — Cisco, AWS, personal friends',due:'2026-04-05',done:false},
+      {id:'m56',goal:'g6',area:'social', name:'Network tracker tab added to Google Sheet',due:'2026-03-26',done:false},
+      {id:'m57',goal:'g6',area:'social', name:'15 outreach messages sent — A-tier contacts first',due:'2026-03-28',done:false},
+      {id:'m58',goal:'g6',area:'social', name:'10 responses received, 5 calls scheduled',due:'2026-04-07',done:false},
+      {id:'m59',goal:'g6',area:'social', name:'5 real conversations completed — calls or coffee',due:'2026-04-15',done:false},
+      {id:'m60',goal:'g6',area:'social', name:'3+ referrals submitted at target companies',due:'2026-04-30',done:false},
+      {id:'m61',goal:'g6',area:'social', name:'3-4 friendships with recurring monthly rhythm',due:'2026-06-30',done:false},
+      {id:'m62',goal:'g6',area:'social', name:'Weekly social activity outside family — consistent',due:'2026-09-30',done:false},
+    ],
+    actions:[
+      // Career — this week
+      {id:'a1', goal:'g1',area:'career', name:'Complete referral outreach — finish LinkedIn contacts at target companies', energy:'high',due:'2026-03-26',time:'2 hrs',notes:'A-tier first: Databricks, Salesforce, ServiceNow, Google Cloud, Microsoft',done:false,source:null},
+      {id:'a2', goal:'g1',area:'career', name:'Rewrite LinkedIn headline and About section — platform + AI story', energy:'med', due:'2026-03-28',time:'1 hr',  notes:'Position as B2B platform PM who builds with AI',done:false,source:null},
+      {id:'a3', goal:'g1',area:'career', name:'Add Status column to job tracking Google Sheet', energy:'low', due:'2026-03-25',time:'15 min',notes:'Applied / Referral Pending / Screen Scheduled / In Process / Pass',done:false,source:null},
+      {id:'a4', goal:'g1',area:'career', name:'Tighten outreach message template — under 150 words', energy:'med', due:'2026-03-26',time:'30 min',notes:'Use Career Advisor Project to workshop this',done:false,source:null},
+      {id:'a5', goal:'g1',area:'career', name:'Prioritize top 10 roles from target list — best fit first', energy:'med', due:'2026-03-26',time:'30 min',notes:'Databricks Staff PM, Salesforce Director Agentforce, ServiceNow Sr Principal PM look strong',done:false,source:null},
+      {id:'a6', goal:'g1',area:'career', name:'Follow up on 10 submitted applications — check status', energy:'low', due:'2026-03-28',time:'30 min',notes:'If referral contact at company — ping them',done:false,source:null},
+      {id:'a7', goal:'g1',area:'career', name:'Update LinkedIn Open to Work — visible to recruiters only', energy:'low', due:'2026-03-25',time:'15 min',notes:'Principal PM, Director PM, B2B, Platform, AI Product',done:false,source:null},
+      {id:'a8', goal:'g1',area:'career', name:'Identify your 6-8 best STAR stories from Cisco and AWS', energy:'med', due:'2026-04-05',time:'1 hr',  notes:'List situations first, don\'t write yet. Best platform launch, ecosystem win, bold call, failure/recovery',done:false,source:null},
+      {id:'a9', goal:'g1',area:'career', name:'Write first 2 STAR stories in full', energy:'high',due:'2026-04-10',time:'2 hrs', notes:'Start with strongest — biggest product impact story',done:false,source:null},
+      // Learning
+      {id:'a10',goal:'g2',area:'growth', name:'Finish DeepLearning.AI Course 2 this week', energy:'high',due:'2026-03-29',time:'4 hrs', notes:'Neural networks, backprop, TF — push through',done:false,source:null},
+      {id:'a11',goal:'g2',area:'growth', name:'Add AI learning plan to Claude Project', energy:'low', due:'2026-03-25',time:'15 min',notes:'Upload HTML learning plan file to Personal CoS Project',done:false,source:null},
+      {id:'a12',goal:'g2',area:'growth', name:'Do first competitive research brief — Databricks AI strategy', energy:'low', due:'2026-03-28',time:'30 min',notes:'Use Career Advisor Project: brief me on Databricks AI platform strategy and top PM interview questions',done:false,source:null},
+      {id:'a13',goal:'g2',area:'growth', name:'Start AI limitations log — doc for what Claude gets wrong', energy:'low', due:'2026-03-28',time:'15 min',notes:'Every surprise — good or bad — is interview content by May',done:false,source:null},
+      {id:'a14',goal:'g2',area:'growth', name:'Document 3 existing AI projects for portfolio', energy:'med', due:'2026-04-10',time:'1 hr',  notes:'Investing app, Life OS, CoS agent — what it does, what you learned, limitations',done:false,source:null},
+      // Health
+      {id:'a15',goal:'g3',area:'health', name:'Register for Bay to Breakers — baytobreakers.com', energy:'low', due:'2026-03-24',time:'10 min',notes:'$65-85 — do it today before talking yourself out of it',done:false,source:null},
+      {id:'a16',goal:'g3',area:'health', name:'Log baseline in Google Sheet — weight 202, BF 27.2%, waist 35.5"', energy:'low', due:'2026-03-25',time:'10 min',notes:'Day 1 baseline. You\'ll look back at this in 90 days.',done:false,source:null},
+      {id:'a17',goal:'g3',area:'health', name:'Confirm Apple Health syncing — Peloton, smart scale, Apple Watch', energy:'low', due:'2026-03-26',time:'20 min',notes:'One dashboard, no manual entry',done:false,source:null},
+      {id:'a18',goal:'g3',area:'health', name:'Add Bay to Breakers 8-week run progression to calendar', energy:'low', due:'2026-03-27',time:'20 min',notes:'Week 1: 3 runs of 3-4 miles easy. Add 0.5 miles to long run each week.',done:false,source:null},
+      {id:'a19',goal:'g3',area:'health', name:'Start Week 1 training — Monday March 30', energy:'med', due:'2026-03-30',time:'1 hr',  notes:'Monday: weights AM, yoga PM. Just start.',done:false,source:null},
+      {id:'a20',goal:'g3',area:'health', name:'Implement 4 diet rules starting Monday', energy:'low', due:'2026-03-30',time:'0',   notes:'Protein first, cut liquid calories, carbs around workouts, portion control',done:false,source:null},
+      // Finance / Admin
+      {id:'a21',goal:'g4',area:'finance',name:'Make 2025 IRA contribution — deadline April 15', energy:'med', due:'2026-04-10',time:'30 min',notes:'Max contribution: $7,000 (or $8,000 if 50+)',done:false,source:null},
+      {id:'a22',goal:'g4',area:'finance',name:'File federal and state taxes — or file extension', energy:'high',due:'2026-04-14',time:'2 hrs', notes:'Deadline April 15. Extension = more time to file, not to pay',done:false,source:null},
+      {id:'a23',goal:'g4',area:'finance',name:'Check property tax due date for your county', energy:'low', due:'2026-03-28',time:'10 min',notes:'Santa Clara/San Mateo — look up exact date and amount',done:false,source:null},
+      {id:'a24',goal:'g4',area:'finance',name:'Confirm health insurance transfer to wife\'s company', energy:'med', due:'2026-04-01',time:'30 min',notes:'Check when current coverage ends and enrollment deadline',done:false,source:null},
+      {id:'a25',goal:'g4',area:'finance',name:'Calculate monthly burn rate and precise runway', energy:'med', due:'2026-04-07',time:'1 hr',  notes:'Fixed + variable + Cornell starting Sept. Divide liquid reserves by that number.',done:false,source:null},
+      {id:'a26',goal:'g4',area:'finance',name:'Research fee-only financial planner for estate/tax planning', energy:'low', due:'2026-04-30',time:'1 hr',  notes:'NAPFA.org — find fiduciary, fee-only advisor for Roth conversion + estate planning',done:false,source:null},
+      // Family
+      {id:'a27',goal:'g5',area:'family', name:'Book Alcatraz tickets — sells out weeks ahead', energy:'low', due:'2026-03-24',time:'10 min',notes:'alcatrazcruises.com — book for spring break week',done:false,source:null},
+      {id:'a28',goal:'g5',area:'family', name:'Book NYC Thanksgiving hotel — prices spike fast', energy:'low', due:'2026-03-30',time:'20 min',notes:'Midtown, Marriott/Hyatt points if possible. 8 months out = good availability now',done:false,source:null},
+      {id:'a29',goal:'g5',area:'family', name:'Finalize spring break Bay Area week plan', energy:'low', due:'2026-03-28',time:'30 min',notes:'Base: Alcatraz, Mt Tam hike, Monterey day trip, SF neighborhood day, Giants game if scheduled',done:false,source:null},
+      {id:'a30',goal:'g5',area:'family', name:'Have pre-Cornell conversation with son — his bucket list', energy:'low', due:'2026-04-05',time:'1 hr',  notes:'His agenda. Ask: what do you want to do before you leave?',done:false,source:null},
+      {id:'a31',goal:'g5',area:'family', name:'Set up recurring golf dates with daughter — every other Saturday', energy:'low', due:'2026-03-25',time:'10 min',notes:'Put in calendar now. 8 AM. Done.',done:false,source:null},
+      {id:'a32',goal:'g5',area:'family', name:'Text parents — schedule Dallas visit for May or June', energy:'low', due:'2026-04-07',time:'10 min',notes:'Ask what works for them, then book flights',done:false,source:null},
+      {id:'a33',goal:'g5',area:'family', name:'Decide Kauai trip dates and book — July window', energy:'med', due:'2026-04-30',time:'1 hr',  notes:'2 weeks in July before Cornell prep takes over August',done:false,source:null},
+      {id:'a34',goal:'g5',area:'family', name:'Book Tahoe ski trip Dec 26-30', energy:'low', due:'2026-05-01',time:'30 min',notes:'Holiday week fills fast — book by May',done:false,source:null},
+      // Social
+      {id:'a35',goal:'g6',area:'social', name:'Add Network tab to Google Sheet', energy:'low', due:'2026-03-26',time:'20 min',notes:'Columns: Name, Company, Relationship, Contacted, Response, Call Scheduled, Referral Submitted',done:false,source:null},
+      {id:'a36',goal:'g6',area:'social', name:'Finish LinkedIn contact filter — sort by warmth and target company', energy:'low', due:'2026-03-25',time:'1 hr',  notes:'A tier: strong connection. B: solid. C: loose. Target companies first.',done:false,source:null},
+      {id:'a37',goal:'g6',area:'social', name:'Send 15 outreach messages — A-tier contacts this week', energy:'med', due:'2026-03-28',time:'2 hrs', notes:'One specific personal detail per message. Under 150 words. Volume matters.',done:false,source:null},
+      {id:'a38',goal:'g6',area:'social', name:'Follow up on LinkedIn chats already started', energy:'low', due:'2026-03-25',time:'30 min',notes:'No response in 5+ days? Send follow-up. Have response? Ask for a call.',done:false,source:null},
+      // Admin / Tactical
+      {id:'a39',goal:null,area:'admin',  name:'Get vision exam and new prescription glasses', energy:'low', due:'2026-04-30',time:'2 hrs', notes:'Schedule exam first, then order glasses',done:false,source:null},
+      {id:'a40',goal:null,area:'admin',  name:'Start automating fantasy baseball data tracking with Claude', energy:'med', due:'2026-04-30',time:'2 hrs', notes:'Great AI project — data pipeline + decision assistant. Less time, better decisions.',done:false,source:null},
+      {id:'a41',goal:null,area:'admin',  name:'Bocce ball practice before league', energy:'low', due:'2026-04-15',time:'1 hr',  notes:'Find a court or practice setup',done:false,source:null},
+    ],
   };
-}
-// ─── JSONBin.io Sync ─────────────────────────────────────────────
-const LS_KEY='los26b';
-const LS_BIN='los26b_bin';
-const LS_APIKEY='los26b_key';
-let JB_BIN=localStorage.getItem(LS_BIN)||'';
-let JB_KEY=localStorage.getItem(LS_APIKEY)||'';
-let syncTimer=null;
-
-function jbHeaders(){
-  return{
-    'Content-Type':'application/json',
-    'X-Master-Key':JB_KEY,
-    'X-Bin-Versioning':'false'
-  };
-}
-function jbUrl(){return`https://api.jsonbin.io/v3/b/${JB_BIN}`;}
-function isConfigured(){return!!(JB_BIN&&JB_KEY);}
-
-function setSyncStatus(state,msg){
-  const dot=document.getElementById('sync-dot');
-  const label=document.getElementById('sync-label');
-  const mlabel=document.getElementById('m-sync-label');
-  const colors={ok:'#2dbe8c',err:'#d93025',syncing:'#e6b830',off:'#a8a39b'};
-  if(dot) dot.style.background=colors[state]||colors.off;
-  if(label) label.textContent=msg;
-  if(mlabel){mlabel.textContent=msg;mlabel.style.color=colors[state]||colors.off;}
-}
-
-async function loadS(){
-  // Load localStorage for instant first render only if JSONBin not configured
-  if(!isConfigured()){
-    try{
-      const d=localStorage.getItem(LS_KEY);
-      if(d){const p=JSON.parse(d);S={...mkState(),...p};}
-    }catch(e){}
-    setSyncStatus('off','not connected');
-    return;
-  }
-  // Always fetch fresh from JSONBin — never trust local cache
-  setSyncStatus('syncing','loading…');
-  try{
-    const url=jbUrl()+'?t='+Date.now();
-    console.log('[LifeOS] Fetching:',url);
-    const res=await fetch(url,{method:'GET',headers:{...jbHeaders(),'Cache-Control':'no-cache','Pragma':'no-cache'}});
-    console.log('[LifeOS] Response status:',res.status);
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const data=await res.json();
-    console.log('[LifeOS] Got record, actions count:',data?.record?.actions?.length);
-    const remote=data.record;
-    if(remote&&remote.goals&&remote.actions){
-      S={...mkState(),...remote};
-      localStorage.setItem(LS_KEY,JSON.stringify(remote));
-      setSyncStatus('ok','synced ✓ ('+remote.actions.length+' actions)');
-    } else {
-      console.log('[LifeOS] Empty bin — pushing local state');
-      await pushToJB();
-    }
-  }catch(err){
-    setSyncStatus('err','load failed: '+err.message);
-    console.error('[LifeOS] JSONBin load error:',err);
-  }
-}
-
-async function pushToJB(){
-  if(!isConfigured())return false;
-  try{
-    const body=JSON.stringify(S);
-    const res=await fetch(jbUrl(),{
-      method:'PUT',
-      headers:jbHeaders(),
-      body
-    });
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    localStorage.setItem(LS_KEY,body);
-    return true;
-  }catch(e){
-    console.error('JSONBin push error:',e);
-    return false;
-  }
-}
-
-function saveS(){
-  try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}
-  if(syncTimer)clearTimeout(syncTimer);
-  if(isConfigured()){
-    setSyncStatus('syncing','saving…');
-    syncTimer=setTimeout(async()=>{
-      const ok=await pushToJB();
-      setSyncStatus(ok?'ok':'err',ok?'saved ✓':'save failed');
-    },1200);
-  }
-}
-
-async function manualSync(){
-  if(!isConfigured()){showSyncSetup();return;}
-  setSyncStatus('syncing','syncing…');
-  await loadS();
-  renderSB();render();renderMobile();
-}
-
-function showSyncSetup(){
-  document.getElementById('jb-bin-id').value=JB_BIN||'';
-  document.getElementById('jb-api-key').value=JB_KEY||'';
-  const r=document.getElementById('sync-test-result');
-  if(r)r.style.display='none';
-  openM('sync-modal');
-}
-
-async function testSyncUrl(){
-  const bin=document.getElementById('jb-bin-id').value.trim();
-  const key=document.getElementById('jb-api-key').value.trim();
-  const res=document.getElementById('sync-test-result');
-  res.style.display='block';
-  res.style.color='var(--finance)';
-  res.textContent='Testing connection…';
-  if(!bin||!key){
-    res.style.color='#d93025';
-    res.textContent='⚠ Enter both Bin ID and Master Key.';
-    return;
-  }
-  try{
-    const r=await fetch(`https://api.jsonbin.io/v3/b/${bin}`,{
-      method:'GET',
-      headers:{'X-Master-Key':key,'X-Bin-Versioning':'false','Content-Type':'application/json'}
-    });
-    if(r.status===401){
-      res.style.color='#d93025';
-      res.textContent='✗ Invalid API key — check your Master Key.';
-      return;
-    }
-    if(r.status===404){
-      res.style.color='#d93025';
-      res.textContent='✗ Bin not found — check your Bin ID.';
-      return;
-    }
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    res.style.color='var(--health)';
-    res.textContent='✓ Connected! Ready to sync.';
-  }catch(e){
-    res.style.color='#d93025';
-    res.textContent='✗ Connection failed — check your credentials.';
-  }
-}
-
-function saveSyncUrl(){
-  const bin=document.getElementById('jb-bin-id').value.trim();
-  const key=document.getElementById('jb-api-key').value.trim();
-  if(!bin||!key){alert('Both Bin ID and Master Key are required.');return;}
-  JB_BIN=bin;JB_KEY=key;
-  localStorage.setItem(LS_BIN,bin);
-  localStorage.setItem(LS_APIKEY,key);
-  closeM('sync-modal');
-  setSyncStatus('syncing','connecting…');
-  pushToJB().then(ok=>{
-    setSyncStatus(ok?'ok':'err',ok?'connected ✓':'check credentials');
-    showCoSR(ok?'✓ Connected to JSONBin! Data syncing across devices.':'⚠ Could not connect — check your Bin ID and API Key.');
-  });
-}
-
-function copyGAS(){
-  // Legacy — no longer used but kept to avoid errors
-  showCoSR('Use JSONBin.io for sync — see ⚙ Sync setup.');
 }
 
 let S=mkState();
+function loadS(){try{const d=localStorage.getItem('los26b');if(d){const p=JSON.parse(d);S={...mkState(),...p};}}catch(e){}}
+function saveS(){try{localStorage.setItem('los26b',JSON.stringify(S));}catch(e){}}
+
+// ─── Fitness State ─────────────────────────────────────────────────
+const FIT_DEFAULT = {
+  bodyLog: [
+    {date:'2026-03-24', weight:202, bf:27.2, waist:35.5, note:'Baseline'}
+  ],
+  workoutLog: {},  // key: 'YYYY-MM-DD_session' -> {done, notes}
+  currentWeek: 0,  // 0-indexed into B2B_PLAN
+};
+
+// B2B 8-Week Run Progression (Week 0 = Mar 30)
+const B2B_PLAN = [
+  {label:'Wk 1', startDate:'2026-03-30', longRun:3.5, totalMi:'7–8', note:'Just get moving. Easy pace throughout.'},
+  {label:'Wk 2', startDate:'2026-04-06', longRun:4.0, totalMi:'8–9', note:'Spring break week — flexible days OK.'},
+  {label:'Wk 3', startDate:'2026-04-13', longRun:4.5, totalMi:'9–10', note:'Zone 2 only. If you can\'t talk, slow down.'},
+  {label:'Wk 4', startDate:'2026-04-20', longRun:5.0, totalMi:'10–11', note:'First real distance week. Honor the taper instinct.'},
+  {label:'Wk 5', startDate:'2026-04-27', longRun:5.5, totalMi:'11–12', note:'Toughest week mentally. Trust the plan.'},
+  {label:'Wk 6', startDate:'2026-05-04', longRun:6.0, totalMi:'12–13', note:'You can see the finish line from here.'},
+  {label:'Wk 7', startDate:'2026-05-11', longRun:4.0, totalMi:'8', note:'TAPER WEEK. Easy runs only. Sleep more.'},
+  {label:'Wk 8', startDate:'2026-05-17', longRun:7.46, totalMi:'7.5', note:'RACE DAY 🎽 Bay to Breakers'},
+];
+
+const BODY_TARGETS = [
+  {period:'Baseline (Mar 24)', weight:202, bf:27.2, bmi:26.7, waist:35.5},
+  {period:'Q2 (Jun 30)',       weight:190, bf:23,   bmi:25.1, waist:33},
+  {period:'Q3 (Sep 30)',       weight:182, bf:20,   bmi:24.0, waist:31},
+  {period:'Year End (Dec 31)', weight:178, bf:18,   bmi:23.5, waist:30},
+];
+
+// HR Zones for age 55 (max HR = 165)
+const HR_ZONES = [
+  {name:'Zone 1 — Recovery',    min:83,  max:99,  color:'#64b5f6', desc:'Walks, cool-down'},
+  {name:'Zone 2 — Aerobic',     min:99,  max:116, color:'#2dbe8c', desc:'Easy runs, Peloton endurance — your money zone'},
+  {name:'Zone 3 — Tempo',       min:116, max:132, color:'#e6b830', desc:'Moderate effort runs'},
+  {name:'Zone 4 — Threshold',   min:132, max:149, color:'#f0804a', desc:'Intervals, hard Peloton rides'},
+  {name:'Zone 5 — Max Effort',  min:149, max:165, color:'#ef4d6f', desc:'Sprint intervals only — brief'},
+];
+
+const RACE_CALENDAR = [
+  {name:'Bay to Breakers',          date:'2026-05-17', mo:'MAY', day:'17', dist:'12k (7.5 mi)',      status:'rs-reg',    statusLabel:'✓ Registered', phase:'Phase 1'},
+  {name:'SF Half Marathon',         date:'2026-07-26', mo:'JUL', day:'26', dist:'13.1 mi',           status:'rs-stretch', statusLabel:'Stretch goal', phase:'Phase 2'},
+  {name:'Pacific Grove Sprint Tri', date:'2026-09-13', mo:'SEP', day:'13', dist:'750m / 12mi / 3mi', status:'rs-target', statusLabel:'Primary target', phase:'Phase 3'},
+  {name:'Santa Cruz Sprint Tri',    date:'2026-09-20', mo:'SEP', day:'20', dist:'750m / 12mi / 3mi', status:'rs-open',   statusLabel:'Backup',        phase:'Phase 3'},
+];
+
+// Weekly schedule template  [day, AM session, PM session, AM color, PM color]
+const WEEK_TEMPLATE = [
+  {day:'Mon', am:'Weights', pm:'Yoga', amc:'#5b6af5', pmc:'#a855f7'},
+  {day:'Tue', am:'Run — intervals', pm:'Peloton easy', amc:'#2dbe8c', pmc:'#2dbe8c'},
+  {day:'Wed', am:'Swimming', pm:'Weights', amc:'#64b5f6', pmc:'#5b6af5'},
+  {day:'Thu', am:'Peloton zones', pm:'Yoga/walk', amc:'#2dbe8c', pmc:'#a855f7'},
+  {day:'Fri', am:'Easy run', pm:'Swim or yoga', amc:'#2dbe8c', pmc:'#64b5f6'},
+  {day:'Sat', am:'Long run / Golf', pm:'', amc:'#f0804a', pmc:''},
+  {day:'Sun', am:'REST', pm:'', amc:'', pmc:''},
+];
+
+function getFitState(){
+  if(!S.fitness) S.fitness = JSON.parse(JSON.stringify(FIT_DEFAULT));
+  return S.fitness;
+}
+
+function getCurrentB2BWeek(){
+  const now = new Date();
+  for(let i = B2B_PLAN.length-1; i >= 0; i--){
+    if(now >= new Date(B2B_PLAN[i].startDate)) return i;
+  }
+  return -1; // before training starts
+}
+
+function getWeekDates(offsetWeeks=0){
+  // Return Mon-Sun dates for current week + offset
+  const now = new Date();
+  const dow = now.getDay(); // 0=Sun
+  const mon = new Date(now);
+  mon.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1) + offsetWeeks*7);
+  return Array.from({length:7}, (_,i)=>{
+    const d = new Date(mon);
+    d.setDate(mon.getDate()+i);
+    return d.toISOString().split('T')[0];
+  });
+}
+
+function togWorkout(dateStr, session){
+  const fit = getFitState();
+  const key = dateStr+'_'+session;
+  fit.workoutLog[key] = !fit.workoutLog[key];
+  saveS();render();
+}
+
+function rFitness(el){
+  const fit = getFitState();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const weekDates = getWeekDates(0);
+  const b2bWeek = getCurrentB2BWeek();
+
+  // Body comp stats — latest entry
+  const latest = fit.bodyLog[fit.bodyLog.length-1];
+  const baseline = fit.bodyLog[0];
+  const weightDelta = latest.weight - baseline.weight;
+  const bfDelta = latest.bf - baseline.bf;
+
+  // Count workouts this week
+  let wkDone=0, wkTotal=0;
+  weekDates.forEach((d,i)=>{
+    const t = WEEK_TEMPLATE[i];
+    if(t.am && t.am !== 'REST'){wkTotal++;if(fit.workoutLog[d+'_am'])wkDone++;}
+    if(t.pm){wkTotal++;if(fit.workoutLog[d+'_pm'])wkDone++;}
+  });
+
+  el.innerHTML = `
+  <!-- Body Comp Stats Row -->
+  <div class="sh"><div class="sh-title">Body Composition</div><div class="sh-line"></div><button class="sh-btn" onclick="openBodyLogModal()">+ Log Weight</button></div>
+  <div class="fit-grid">
+    <div class="fit-stat"><div class="fit-stat-top" style="background:var(--health)"></div>
+      <div class="fit-stat-label">Weight</div>
+      <div class="fit-stat-val">${latest.weight}<span style="font-size:13px;color:var(--text3)"> lbs</span></div>
+      <div class="fit-stat-delta ${weightDelta<=0?'pos':'neg'}">${weightDelta<=0?'↓':'↑'} ${Math.abs(weightDelta)} lbs from baseline</div>
+      <div class="fit-stat-unit">Target Jun 30: 190 lbs</div>
+    </div>
+    <div class="fit-stat"><div class="fit-stat-top" style="background:var(--career)"></div>
+      <div class="fit-stat-label">Body Fat %</div>
+      <div class="fit-stat-val">${latest.bf}<span style="font-size:13px;color:var(--text3)"> %</span></div>
+      <div class="fit-stat-delta ${bfDelta<=0?'pos':'neg'}">${bfDelta<=0?'↓':'↑'} ${Math.abs(bfDelta).toFixed(1)}% from baseline</div>
+      <div class="fit-stat-unit">Target Jun 30: 23%</div>
+    </div>
+    <div class="fit-stat"><div class="fit-stat-top" style="background:var(--finance)"></div>
+      <div class="fit-stat-label">Waist</div>
+      <div class="fit-stat-val">${latest.waist}<span style="font-size:13px;color:var(--text3)"> in</span></div>
+      <div class="fit-stat-unit" style="margin-top:4px">Target Jun 30: 33"</div>
+      <div class="fit-stat-unit">Measure every 2 weeks</div>
+    </div>
+    <div class="fit-stat"><div class="fit-stat-top" style="background:var(--social)"></div>
+      <div class="fit-stat-label">This Week</div>
+      <div class="fit-stat-val">${wkDone}<span style="font-size:13px;color:var(--text3)"> / ${wkTotal}</span></div>
+      <div class="fit-stat-unit" style="margin-top:4px">Sessions completed</div>
+      <div class="fit-stat-delta ${wkDone>=wkTotal*0.7?'pos':'neg'}">${wkDone>=wkTotal*0.7?'On track':'Needs attention'}</div>
+    </div>
+  </div>
+
+  <!-- Weekly Workout Grid -->
+  <div class="sh" style="margin-top:4px"><div class="sh-title">This Week's Workouts</div><div class="sh-line"></div></div>
+  <div class="wk-grid">
+    ${weekDates.map((d,i)=>{
+      const t=WEEK_TEMPLATE[i];
+      const isToday=d===todayStr;
+      const amDone=fit.workoutLog[d+'_am'];
+      const pmDone=fit.workoutLog[d+'_pm'];
+      const dayNum=new Date(d).getDate();
+      const dayMo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][new Date(d).getMonth()];
+      return`<div class="wk-day ${isToday?'today-col':''}">
+        <div class="wk-day-name">${t.day}</div>
+        <div class="wk-day-date">${dayMo} ${dayNum}</div>
+        <div class="wk-sessions">
+          ${t.am==='REST'
+            ? `<div class="wk-sess rest">REST</div>`
+            : `<div class="wk-sess ${amDone?'done-s':''}" style="background:${t.amc}18;color:${t.amc}" onclick="togWorkout('${d}','am')">${amDone?'✓ ':''} ${t.am}</div>`
+          }
+          ${t.pm ? `<div class="wk-sess ${pmDone?'done-s':''}" style="background:${t.pmc}18;color:${t.pmc}" onclick="togWorkout('${d}','pm')">${pmDone?'✓ ':''} ${t.pm}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:16px">Tap any session to mark complete. Today highlighted in blue.</div>
+
+  <!-- B2B Run Progression -->
+  <div class="sh"><div class="sh-title">Bay to Breakers — 8-Week Run Progression</div><div class="sh-line"></div><span style="font-size:11px;color:var(--health);font-family:'DM Mono',monospace">May 17 🎽</span></div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px">
+    <table class="run-prog-table" style="width:100%">
+      <thead><tr><th>Week</th><th>Long Run</th><th>Total Miles</th><th>Key Note</th></tr></thead>
+      <tbody>
+        ${B2B_PLAN.map((w,i)=>{
+          const isPast = new Date() > new Date(w.startDate) && i < b2bWeek;
+          const isCurrent = i === b2bWeek;
+          const isRace = i === 7;
+          const cls = isRace?'race-wk':isCurrent?'current-wk':isPast?'done-wk':'';
+          return`<tr class="${cls}">
+            <td style="font-weight:${isCurrent?600:400};color:${isCurrent?'var(--health)':'inherit'}">${w.label}${isCurrent?' ←':''}</td>
+            <td>${isRace?'🎽 RACE':''+w.longRun+' mi'}</td>
+            <td>${w.totalMi} mi</td>
+            <td class="rpt-name" style="color:${isRace?'var(--career)':isCurrent?'var(--text)':'var(--text3)'}">${w.note}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Two-column: HR Zones + Race Calendar -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+    <div>
+      <div class="sh"><div class="sh-title">Heart Rate Zones — Age 55</div><div class="sh-line"></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px">
+        ${HR_ZONES.map(z=>`
+        <div class="hr-zone">
+          <div class="hr-zone-bar" style="width:${(z.max-z.min)*0.9}px;background:${z.color}"></div>
+          <div>
+            <div class="hr-zone-name" style="font-size:11px;color:${z.color}">${z.name}</div>
+            <div class="hr-zone-range">${z.min}–${z.max} bpm</div>
+          </div>
+          <div class="hr-zone-desc">${z.desc}</div>
+        </div>`).join('')}
+        <div style="margin-top:8px;padding:8px 10px;background:rgba(45,190,140,0.07);border-radius:var(--radius-sm);font-size:11px;color:var(--health)">
+          ✦ Max HR (220−55) = <strong>165 bpm</strong>. Zone 2 (99–116) is your fat-burn and aerobic base zone — aim for most easy runs and Peloton rides here.
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="sh"><div class="sh-title">2026 Race Calendar</div><div class="sh-line"></div></div>
+      ${RACE_CALENDAR.map(r=>`
+      <div class="race-card">
+        <div class="race-date-badge">
+          <div class="race-date-mo">${r.mo}</div>
+          <div class="race-date-d">${r.day}</div>
+        </div>
+        <div style="flex:1">
+          <div class="race-name">${r.name}</div>
+          <div class="race-dist">${r.dist} · ${r.phase}</div>
+        </div>
+        <div class="race-status ${r.status}">${r.statusLabel}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- Body Comp Targets Table -->
+  <div class="sh"><div class="sh-title">Body Composition Targets — Age 55, 6'1"</div><div class="sh-line"></div></div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px">
+    <table class="comp-log" style="width:100%">
+      <thead><tr><th>Period</th><th>Weight</th><th>Body Fat %</th><th>BMI</th><th>Waist</th></tr></thead>
+      <tbody>
+        ${BODY_TARGETS.map((t,i)=>`
+        <tr class="${i>0?'target-row':''}">
+          <td style="font-family:'DM Sans',sans-serif;color:${i===0?'var(--text)':'var(--text2)'}">${t.period}</td>
+          <td>${t.weight} lbs</td>
+          <td style="color:${i>0?(t.bf<=18?'var(--health)':t.bf<=22?'var(--career)':'var(--text2)'):'inherit'}">${t.bf}%</td>
+          <td>${t.bmi}</td>
+          <td>${t.waist}"</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Triathlon Phase Overview -->
+  <div class="sh"><div class="sh-title">Training Phases — Full Year</div><div class="sh-line"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
+    ${[
+      {phase:'Phase 1',dates:'Now → May 17',goal:'Base building + Bay to Breakers',color:'#2dbe8c',icon:'🏃'},
+      {phase:'Phase 2',dates:'May 18 → Jul 31',goal:'Build endurance + 10k race + bricks start',color:'#5b6af5',icon:'🚴'},
+      {phase:'Phase 3',dates:'Aug 1 → Sep 30',goal:'Full tri prep → Sprint triathlon',color:'#f0804a',icon:'🏊'},
+      {phase:'Phase 4',dates:'Oct → Dec',goal:'Maintain + reset + plan 2027',color:'#a855f7',icon:'🎯'},
+    ].map(p=>`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;border-top:2px solid ${p.color}">
+      <div style="font-size:20px;margin-bottom:5px">${p.icon}</div>
+      <div style="font-size:11px;font-weight:600;color:${p.color}">${p.phase}</div>
+      <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin:2px 0">${p.dates}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px;line-height:1.4">${p.goal}</div>
+    </div>`).join('')}
+  </div>
+
+  <!-- Weight Log History -->
+  <div class="sh" style="margin-top:16px"><div class="sh-title">Body Log History</div><div class="sh-line"></div><button class="sh-btn" onclick="openBodyLogModal()">+ Log Entry</button></div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <table class="comp-log" style="width:100%">
+      <thead><tr><th>Date</th><th>Weight</th><th>Body Fat %</th><th>Waist</th><th>Note</th></tr></thead>
+      <tbody>
+        ${[...fit.bodyLog].reverse().map(e=>`
+        <tr>
+          <td>${e.date}</td>
+          <td>${e.weight} lbs</td>
+          <td>${e.bf}%</td>
+          <td>${e.waist}"</td>
+          <td style="font-family:'DM Sans',sans-serif;color:var(--text2)">${e.note||'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+  `;
+}
+
+// ─── Body Log Modal ───────────────────────────────────────────────
+function openBodyLogModal(){
+  document.getElementById('bl-modal').classList.add('open');
+  document.getElementById('bl-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('bl-weight').value='';
+  document.getElementById('bl-bf').value='';
+  document.getElementById('bl-waist').value='';
+  document.getElementById('bl-note').value='';
+}
+function saveBodyLog(){
+  const fit=getFitState();
+  const entry={
+    date:document.getElementById('bl-date').value,
+    weight:parseFloat(document.getElementById('bl-weight').value)||0,
+    bf:parseFloat(document.getElementById('bl-bf').value)||0,
+    waist:parseFloat(document.getElementById('bl-waist').value)||0,
+    note:document.getElementById('bl-note').value.trim(),
+  };
+  if(!entry.weight)return;
+  // Remove duplicate for same date
+  fit.bodyLog=fit.bodyLog.filter(e=>e.date!==entry.date);
+  fit.bodyLog.push(entry);
+  fit.bodyLog.sort((a,b)=>a.date.localeCompare(b.date));
+  saveS();
+  document.getElementById('bl-modal').classList.remove('open');
+  render();
+}
+
+loadS();
 
 const uid=p=>p+Date.now()+Math.random().toString(36).slice(2,4);
 const tod=()=>new Date().toISOString().split('T')[0];
@@ -729,7 +925,7 @@ function renderSB(){
 // ─── Desktop views ────────────────────────────────────────────────
 function go(v){
   S.view=v;
-  const titles={dashboard:'Dashboard',goals:'Goals',milestones:'Milestones',actions:'Action Items',review:'Weekly Review',quarterly:'Quarterly Plan',inbox:'Gmail Inbox',calendar:'Calendar'};
+  const titles={dashboard:'Dashboard',goals:'Goals',milestones:'Milestones',actions:'Action Items',review:'Weekly Review',inbox:'Gmail Inbox',calendar:'Calendar',fitness:'🏃 Fitness Tracker'};
   const aid=v.startsWith('area_')?v.replace('area_',''):null;
   document.getElementById('view-title').textContent=aid?`${ga(aid).emoji} ${ga(aid).label}`:(titles[v]||'');
   renderSB();render();
@@ -738,11 +934,11 @@ function go(v){
 function render(){
   const el=document.getElementById('main'),v=S.view;
   if(v==='dashboard')rDash(el);
+  else if(v==='fitness')rFitness(el);
   else if(v==='goals')rGoals(el,null);
   else if(v==='milestones')rMs(el,null);
   else if(v==='actions')rActs(el,null,null);
   else if(v==='review')rReview(el);
-  else if(v==='quarterly')rQuarterly(el);
   else if(v==='inbox')rInbox(el);
   else if(v==='calendar')rCal(el);
   else if(v.startsWith('area_'))rArea(el,v.replace('area_',''));
@@ -793,21 +989,14 @@ function gCard(g){
   const a=ga(g.area),p=gpct(g.id);
   const om=S.milestones.filter(m=>m.goal===g.id&&!m.done).length;
   const tm=S.milestones.filter(m=>m.goal===g.id).length;
-  return`<div class="goal-card" style="border-left-color:${a.color}">
-    <div class="gc-hdr" style="cursor:pointer" onclick="openEditGoal('${g.id}')">
-      <div class="gc-title">${g.title}</div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <div class="gc-horizon">${g.horizon}</div>
-        <span style="font-size:11px;color:var(--text3);padding:2px 6px;border:1px solid var(--border);border-radius:4px;cursor:pointer" onclick="openEditGoal('${g.id}');event.stopPropagation()">✎</span>
-      </div>
-    </div>
-    ${g.why?`<div class="gc-why" style="cursor:pointer" onclick="openEditGoal('${g.id}')">"${g.why}"</div>`:''}
+  return`<div class="goal-card" style="border-left-color:${a.color}" onclick="go('area_${g.area}')">
+    <div class="gc-hdr"><div class="gc-title">${g.title}</div><div class="gc-horizon">${g.horizon}</div></div>
+    ${g.why?`<div class="gc-why">"${g.why}"</div>`:''}
     <div class="gc-footer">
-      <span class="gc-tag" style="background:${a.soft};color:${a.color};cursor:pointer" onclick="go('area_${g.area}')">${a.emoji} ${a.label}</span>
+      <span class="gc-tag" style="background:${a.soft};color:${a.color}">${a.emoji} ${a.label}</span>
       <div class="gc-prog"><div class="gc-prog-fill" style="width:${p}%;background:${a.color}"></div></div>
       <span class="gc-pct">${p}%</span>
       <span class="gc-ct">${om}/${tm} ms</span>
-      <span style="font-size:11px;color:var(--career);cursor:pointer;padding:2px 7px;border:1px solid var(--career);border-radius:4px;white-space:nowrap" onclick="openAddMs('${g.id}')">+ Milestone</span>
     </div>
   </div>`;
 }
@@ -825,7 +1014,7 @@ function msRow(m){
   const a=ga(m.area),g=gg(m.goal),dc=dcls(m.due);
   return`<div class="ms-row ${m.done?'done':''}" id="ms-${m.id}">
     <div class="ms-chk" onclick="togMs('${m.id}',event)"><span class="ms-ci">✓</span></div>
-    <div class="ms-body" style="cursor:pointer" onclick="openEditMs('${m.id}')">
+    <div class="ms-body">
       <div class="ms-name">${m.name}</div>
       <div class="ms-meta">
         <span class="ms-atag" style="background:${a.soft};color:${a.color}">${a.emoji}</span>
@@ -833,7 +1022,6 @@ function msRow(m){
         ${m.due?`<span class="ms-date ${dc}">${dlbl(m.due)}</span>`:''}
       </div>
     </div>
-    <span class="act-edit-btn" style="align-self:center">✎</span>
   </div>`;
 }
 
@@ -847,14 +1035,13 @@ function rActs(el,fa,fg){
 
 function aRow(a){
   const ar=ga(a.area),g=gg(a.goal),dc=dcls(a.due);
-  return`<div class="act-row ${a.done?'done':''}" id="act-${a.id}" onclick="openEditAction('${a.id}',event)">
+  return`<div class="act-row ${a.done?'done':''}" id="act-${a.id}">
     <div class="chk" onclick="togAct('${a.id}',event)"><span class="chk-i">✓</span></div>
     <div class="a-adot" style="background:${ar.color}"></div>
     <div class="act-name">${a.name}</div>
     ${g?`<span class="a-gtag" title="${g.title}">${g.title}</span>`:''}
     ${etag(a.energy)}
     ${a.due?`<span class="a-due ${dc}">${dlbl(a.due)}</span>`:''}
-    <span class="act-edit-btn">✎</span>
   </div>`;
 }
 
@@ -1231,219 +1418,6 @@ GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: $
   }
 }
 
-// ─── Edit / Delete Goal ──────────────────────────────────────────
-let editingGoalId=null;
-let selAEdit='career';
-
-function openEditGoal(id){
-  const g=S.goals.find(x=>x.id===id);
-  if(!g)return;
-  editingGoalId=id;
-  selAEdit=g.area;
-  document.getElementById('eg-title').value=g.title||'';
-  document.getElementById('eg-why').value=g.why||'';
-  document.getElementById('eg-measure').value=g.measure||'';
-  document.getElementById('eg-due').value=g.due||'';
-  document.getElementById('eg-horizon').value=g.horizon||'6 months';
-  rPickerEdit();
-  openM('edit-goal-modal');
-}
-
-function rPickerEdit(){
-  document.getElementById('eg-apicker').innerHTML=AREAS.map(a=>
-    `<div class="apbtn ${selAEdit===a.id?'sel':''}" style="${selAEdit===a.id?`border-color:${a.color};background:${a.soft};color:${a.color}`:''}" onclick="pickAEdit('${a.id}')">${a.emoji} ${a.label}</div>`
-  ).join('');
-}
-function pickAEdit(id){selAEdit=id;rPickerEdit();}
-
-function saveEditGoal(){
-  const t=document.getElementById('eg-title').value.trim();
-  if(!t)return;
-  const g=S.goals.find(x=>x.id===editingGoalId);
-  if(!g)return;
-  g.title=t;
-  g.area=selAEdit;
-  g.why=document.getElementById('eg-why').value.trim();
-  g.horizon=document.getElementById('eg-horizon').value;
-  g.due=document.getElementById('eg-due').value;
-  g.measure=document.getElementById('eg-measure').value.trim();
-  saveS();closeM('edit-goal-modal');renderSB();render();
-}
-
-function deleteGoal(){
-  const g=S.goals.find(x=>x.id===editingGoalId);
-  if(!g)return;
-  if(!confirm(`Delete goal "${g.title}"? This will not delete linked milestones or actions.`))return;
-  S.goals=S.goals.filter(x=>x.id!==editingGoalId);
-  saveS();closeM('edit-goal-modal');renderSB();render();
-}
-
-// ─── Edit / Delete / Add Milestone ───────────────────────────────
-let editingMsId=null;
-
-function openAddMs(goalId){
-  editingMsId=null;
-  document.getElementById('edit-ms-title').textContent='Add Milestone';
-  document.getElementById('em-name').value='';
-  document.getElementById('em-due').value='';
-  document.getElementById('em-delete-btn').style.display='none';
-  populateMsSelects(goalId,null);
-  openM('edit-ms-modal');
-}
-
-function openEditMs(id){
-  const m=S.milestones.find(x=>x.id===id);
-  if(!m)return;
-  editingMsId=id;
-  document.getElementById('edit-ms-title').textContent='Edit Milestone';
-  document.getElementById('em-name').value=m.name||'';
-  document.getElementById('em-due').value=m.due||'';
-  document.getElementById('em-delete-btn').style.display='';
-  populateMsSelects(m.goal,m.area);
-  openM('edit-ms-modal');
-}
-
-function populateMsSelects(goalId,area){
-  const gs=document.getElementById('em-goal');
-  gs.innerHTML=`<option value="">— No linked goal —</option>`+
-    S.goals.map(g=>`<option value="${g.id}"${goalId===g.id?' selected':''}>${ga(g.area).emoji} ${g.title}</option>`).join('');
-  const as=document.getElementById('em-area');
-  // Auto-set area from goal if available
-  const linkedGoal=S.goals.find(g=>g.id===goalId);
-  const defaultArea=area||(linkedGoal?linkedGoal.area:'career');
-  as.innerHTML=AREAS.map(a=>`<option value="${a.id}"${defaultArea===a.id?' selected':''}>${a.emoji} ${a.label}</option>`).join('');
-}
-
-function saveEditMs(){
-  const n=document.getElementById('em-name').value.trim();
-  if(!n)return;
-  const goalId=document.getElementById('em-goal').value;
-  const area=document.getElementById('em-area').value;
-  const due=document.getElementById('em-due').value;
-  if(editingMsId){
-    const m=S.milestones.find(x=>x.id===editingMsId);
-    if(!m)return;
-    m.name=n;m.goal=goalId||null;m.area=area;m.due=due;
-  } else {
-    S.milestones.push({id:uid('m'),name:n,goal:goalId||null,area,due,done:false});
-  }
-  saveS();closeM('edit-ms-modal');renderSB();render();
-}
-
-function deleteMilestone(){
-  const m=S.milestones.find(x=>x.id===editingMsId);
-  if(!m)return;
-  if(!confirm(`Delete milestone "${m.name}"?`))return;
-  S.milestones=S.milestones.filter(x=>x.id!==editingMsId);
-  saveS();closeM('edit-ms-modal');renderSB();render();
-}
-
-// ─── Quarterly Plan View ──────────────────────────────────────────
-function rQuarterly(el){
-  const quarters=[
-    {id:'q1',label:'Q1 — Jan to Mar',start:'2026-01-01',end:'2026-03-31',color:'var(--growth)'},
-    {id:'q2',label:'Q2 — Apr to Jun',start:'2026-04-01',end:'2026-06-30',color:'var(--career)'},
-    {id:'q3',label:'Q3 — Jul to Sep',start:'2026-07-01',end:'2026-09-30',color:'var(--health)'},
-    {id:'q4',label:'Q4 — Oct to Dec',start:'2026-10-01',end:'2026-12-31',color:'var(--family)'},
-  ];
-  const today=new Date().toISOString().split('T')[0];
-  let html='';
-  quarters.forEach(q=>{
-    const ms=S.milestones.filter(m=>m.due&&m.due>=q.start&&m.due<=q.end)
-      .sort((a,b)=>a.due.localeCompare(b.due));
-    const done=ms.filter(m=>m.done).length;
-    const total=ms.length;
-    const pct=total?Math.round(done/total*100):0;
-    const isCurrent=today>=q.start&&today<=q.end;
-    html+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden${isCurrent?';border-color:var(--career)':''}">
-      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:${isCurrent?'rgba(91,106,245,0.04)':'var(--surface)'}">
-        <div style="font-family:Lora,serif;font-weight:600;font-size:14px;flex:1">${q.label}${isCurrent?' <span style="font-size:10px;color:var(--career);font-family:DM Mono,monospace;font-weight:400">← current</span>':''}</div>
-        <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${done}/${total} done</div>
-        <div style="width:80px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:${q.color};border-radius:2px"></div>
-        </div>
-        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);min-width:28px">${pct}%</div>
-        <span style="font-size:11px;color:var(--career);cursor:pointer;padding:2px 8px;border:1px solid var(--career);border-radius:4px" onclick="openAddMsForQ('${q.start}','${q.end}')">+ Add</span>
-      </div>`;
-    if(ms.length===0){
-      html+=`<div style="padding:12px 16px;font-size:13px;color:var(--text3)">No milestones this quarter.</div>`;
-    } else {
-      // Group by area
-      const byArea={};
-      ms.forEach(m=>{if(!byArea[m.area])byArea[m.area]=[];byArea[m.area].push(m);});
-      html+=`<div style="padding:8px 16px 12px">`;
-      Object.entries(byArea).forEach(([aid,msList])=>{
-        const a=ga(aid);
-        html+=`<div style="margin-top:8px">
-          <div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:${a.color};margin-bottom:4px">${a.emoji} ${a.label}</div>
-          <div class="ms-list">${msList.map(msRow).join('')}</div>
-        </div>`;
-      });
-      html+=`</div>`;
-    }
-    html+=`</div>`;
-  });
-  el.innerHTML=`
-    <div style="font-size:13px;color:var(--text2);margin-bottom:16px">All milestones grouped by quarter across every life area. Click any milestone to edit.</div>
-    ${html}`;
-}
-
-function openAddMsForQ(start,end){
-  // Pre-set due date to middle of quarter
-  const mid=new Date((new Date(start).getTime()+new Date(end).getTime())/2);
-  editingMsId=null;
-  document.getElementById('edit-ms-title').textContent='Add Milestone';
-  document.getElementById('em-name').value='';
-  document.getElementById('em-due').value=mid.toISOString().split('T')[0];
-  document.getElementById('em-delete-btn').style.display='none';
-  populateMsSelects(null,null);
-  openM('edit-ms-modal');
-}
-
-// ─── Edit / Delete Action ────────────────────────────────────────
-let editingActionId=null;
-
-function openEditAction(id,e){
-  // Don't open if clicking the checkbox
-  if(e&&e.target.closest('.chk'))return;
-  const a=S.actions.find(x=>x.id===id);
-  if(!a)return;
-  editingActionId=id;
-  document.getElementById('ea-name').value=a.name||'';
-  document.getElementById('ea-due').value=a.due||'';
-  document.getElementById('ea-notes').value=a.notes||'';
-  // Populate goal dropdown
-  const gs=document.getElementById('ea-goal');
-  gs.innerHTML=`<option value="">— No linked goal —</option>`+S.goals.map(g=>`<option value="${g.id}"${a.goal===g.id?' selected':''}>${ga(g.area).emoji} ${g.title}</option>`).join('');
-  // Populate area dropdown
-  const as=document.getElementById('ea-area-sel');
-  as.innerHTML=AREAS.map(ar=>`<option value="${ar.id}"${a.area===ar.id?' selected':''}>${ar.emoji} ${ar.label}</option>`).join('');
-  // Set energy
-  document.getElementById('ea-energy').value=a.energy||'med';
-  openM('edit-action-modal');
-}
-
-function saveEditAction(){
-  const n=document.getElementById('ea-name').value.trim();
-  if(!n)return;
-  const a=S.actions.find(x=>x.id===editingActionId);
-  if(!a)return;
-  const gid=document.getElementById('ea-goal').value;
-  a.name=n;
-  a.goal=gid||null;
-  a.area=document.getElementById('ea-area-sel').value;
-  a.energy=document.getElementById('ea-energy').value;
-  a.due=document.getElementById('ea-due').value;
-  a.notes=document.getElementById('ea-notes').value;
-  saveS();closeM('edit-action-modal');renderSB();render();renderMobile();
-}
-
-function deleteAction(){
-  if(!confirm('Delete this action item?'))return;
-  S.actions=S.actions.filter(x=>x.id!==editingActionId);
-  saveS();closeM('edit-action-modal');renderSB();render();renderMobile();
-}
-
 // ─── Export / Import ──────────────────────────────────────────────
 function exportData(){
   const data=JSON.stringify(S,null,2);
@@ -1491,143 +1465,12 @@ function showCoSR(msg){
   if(r){r.innerHTML=msg;r.classList.add('show');setTimeout(()=>r.classList.remove('show'),5000);}
 }
 
-// ─── PIN Lock ─────────────────────────────────────────────────────
-const PIN_KEY='los26b_pin';
-const PIN_UNLOCKED='los26b_unlocked';
-let pinBuffer='';
-let pinSettingMode=false; // true = setting new PIN, false = verifying
-let pinFirstEntry=''; // stores first entry during PIN setup confirmation
-
-function initPin(){
-  const unlocked=localStorage.getItem(PIN_UNLOCKED);
-  const hasPin=localStorage.getItem(PIN_KEY);
-  if(unlocked==='1'){
-    // Already unlocked on this device
-    document.getElementById('pin-screen').classList.add('hide');
-    return;
-  }
-  if(!hasPin){
-    // First time — set a PIN
-    pinSettingMode=true;
-    pinFirstEntry='';
-    document.getElementById('pin-set-mode').style.display='block';
-  }
-  // Show PIN screen
-  document.getElementById('pin-screen').classList.remove('hide');
-}
-
-function pinKey(k){
-  if(!k)return;
-  if(pinBuffer.length>=4)return;
-  pinBuffer+=k;
-  updatePinDots();
-  if(pinBuffer.length===4){
-    setTimeout(()=>pinSubmit(),120);
-  }
-}
-
-function pinDel(){
-  if(pinBuffer.length>0){
-    pinBuffer=pinBuffer.slice(0,-1);
-    updatePinDots();
-    document.getElementById('pin-err').textContent='';
-    document.querySelectorAll('.pin-dot').forEach(d=>d.classList.remove('err'));
-  }
-}
-
-function updatePinDots(err){
-  for(let i=0;i<4;i++){
-    const d=document.getElementById('pd'+i);
-    d.classList.toggle('filled',i<pinBuffer.length);
-    if(err)d.classList.add('err'); else d.classList.remove('err');
-  }
-}
-
-function pinSubmit(){
-  const hasPin=localStorage.getItem(PIN_KEY);
-  if(pinSettingMode){
-    if(!pinFirstEntry){
-      // First entry — store and ask to confirm
-      pinFirstEntry=pinBuffer;
-      pinBuffer='';
-      updatePinDots();
-      document.getElementById('pin-set-mode').innerHTML=
-        'Confirm your PIN<br><span style="font-size:11px;color:var(--text3)">Enter the same PIN again</span>';
-      return;
-    } else {
-      // Confirmation entry
-      if(pinBuffer===pinFirstEntry){
-        localStorage.setItem(PIN_KEY,pinBuffer);
-        localStorage.setItem(PIN_UNLOCKED,'1');
-        document.getElementById('pin-screen').classList.add('hide');
-        return;
-      } else {
-        // Mismatch — start over
-        document.getElementById('pin-err').textContent="PINs didn't match — try again";
-        updatePinDots(true);
-        pinFirstEntry='';
-        pinBuffer='';
-        setTimeout(()=>{
-          updatePinDots();
-          document.getElementById('pin-err').textContent='';
-          document.getElementById('pin-set-mode').innerHTML=
-            'First time setup — enter a 4-digit PIN<br><span style="font-size:11px;color:var(--text3)">You\'ll only need this once on each device</span>';
-        },900);
-        return;
-      }
-    }
-  } else {
-    // Verify mode
-    if(pinBuffer===hasPin){
-      localStorage.setItem(PIN_UNLOCKED,'1');
-      document.getElementById('pin-screen').classList.add('hide');
-    } else {
-      document.getElementById('pin-err').textContent='Incorrect PIN';
-      updatePinDots(true);
-      pinBuffer='';
-      setTimeout(()=>{
-        updatePinDots();
-        document.getElementById('pin-err').textContent='';
-      },900);
-    }
-  }
-}
-
-// Allow keyboard input on desktop
-document.addEventListener('keydown',e=>{
-  const ps=document.getElementById('pin-screen');
-  if(ps.classList.contains('hide'))return;
-  if(e.key>='0'&&e.key<='9')pinKey(e.key);
-  if(e.key==='Backspace')pinDel();
-});
-
-// Add "Lock" option to settings — lets user lock and re-enter PIN
-function lockApp(){
-  localStorage.removeItem(PIN_UNLOCKED);
-  pinBuffer='';
-  pinSettingMode=false;
-  updatePinDots();
-  document.getElementById('pin-err').textContent='';
-  document.getElementById('pin-screen').classList.remove('hide');
-}
-
 // ─── Init ─────────────────────────────────────────────────────────
 const now=new Date();
 const DN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
 document.getElementById('view-date').textContent=`${DN[now.getDay()]}, ${MN[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-// Render immediately from localStorage, then refresh after Sheets loads
-// Ensure DOM is fully ready before init
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',startup);
-} else {
-  startup();
-}
-function startup(){
-  initPin();
-  renderSB();render();renderMobile();
-  loadS().then(()=>{renderSB();render();renderMobile();});
-}
+renderSB();render();renderMobile();
 </script>
 </body>
 </html>
