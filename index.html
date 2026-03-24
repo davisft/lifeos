@@ -1484,7 +1484,7 @@ function rQuarterly(el){
     const isCurrent=today>=q.start&&today<=q.end;
     html+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden${isCurrent?';border-color:var(--career)':''}">
       <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:${isCurrent?'rgba(91,106,245,0.04)':'var(--surface)'}">
-        <div style="font-family:'Lora',serif;font-weight:600;font-size:14px;flex:1">${q.label}${isCurrent?' <span style="font-size:10px;color:var(--career);font-family:'DM Mono',monospace;font-weight:400">← current</span>':''}</div>
+        <div style="font-family:Lora,serif;font-weight:600;font-size:14px;flex:1">${q.label}${isCurrent?' <span style="font-size:10px;color:var(--career);font-family:DM Mono,monospace;font-weight:400">← current</span>':''}</div>
         <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${done}/${total} done</div>
         <div style="width:80px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden">
           <div style="height:100%;width:${pct}%;background:${q.color};border-radius:2px"></div>
