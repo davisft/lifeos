@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Life OS 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#faf9f7;--surface:#fff;--surface2:#f5f3ef;--surface3:#ece9e3;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.13);
+  --text:#1a1916;--text2:#6b6760;--text3:#a8a39b;
+  --radius:12px;--radius-sm:8px;
+  --career:#5b6af5;--career-s:rgba(91,106,245,0.1);
+  --health:#2dbe8c;--health-s:rgba(45,190,140,0.1);
+  --family:#f0804a;--family-s:rgba(240,128,74,0.1);
+  --finance:#e6b830;--finance-s:rgba(230,184,48,0.1);
+  --growth:#a855f7;--growth-s:rgba(168,85,247,0.1);
+  --social:#ef4d6f;--social-s:rgba(239,77,111,0.1);
+  --admin:#64748b;--admin-s:rgba(100,116,139,0.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+
+/* ── PIN Lock ── */
+.pin-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.pin-screen.hide{display:none;}
+.pin-logo{font-family:'Lora',serif;font-size:22px;font-weight:600;letter-spacing:-0.02em;margin-bottom:4px;}
+.pin-sub{font-size:12px;color:var(--text3);margin-bottom:32px;font-style:italic;font-family:'Lora',serif;}
+.pin-dots{display:flex;gap:14px;margin-bottom:28px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border2);transition:all .15s;}
+.pin-dot.filled{background:var(--text);border-color:var(--text);}
+.pin-dot.err{background:#d93025;border-color:#d93025;}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:220px;}
+.pin-btn{height:60px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:20px;font-weight:400;cursor:pointer;transition:all .12s;color:var(--text);}
+.pin-btn:hover{background:var(--surface2);}
+.pin-btn:active{background:var(--surface3);transform:scale(.96);}
+.pin-btn.del{font-size:16px;color:var(--text2);}
+.pin-err{font-size:12px;color:#d93025;margin-top:12px;height:16px;font-family:'DM Mono',monospace;}
+.shell{display:flex;height:100vh;overflow:hidden;}
+
+/* ── Sidebar ── */
+.sidebar{width:230px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:22px 0 16px;overflow-y:auto;}
+.logo{padding:0 20px 18px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.logo-title{font-family:'Lora',serif;font-size:17px;font-weight:600;letter-spacing:-0.02em;}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.logo-theme{font-size:11px;color:var(--career);margin-top:5px;font-style:italic;font-family:'Lora',serif;}
+.nav-sec{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;padding:12px 20px 4px;font-weight:500;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 20px;cursor:pointer;color:var(--text2);font-size:13px;transition:all .12s;position:relative;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{color:var(--text);font-weight:500;background:var(--surface2);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:2.5px;border-radius:0 2px 2px 0;background:var(--text);}
+.nav-badge{margin-left:auto;font-size:11px;font-family:'DM Mono',monospace;background:var(--surface3);color:var(--text3);padding:1px 6px;border-radius:10px;}
+.nav-badge.urg{background:#fdecea;color:#d93025;}
+.adot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sb-footer{margin-top:auto;padding:14px 20px 0;border-top:1px solid var(--border);}
+.int-row{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text3);padding:5px 0;cursor:pointer;transition:all .12s;}
+.int-row:hover{color:var(--text2);}
+.idot{width:6px;height:6px;border-radius:50%;}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{padding:14px 24px 12px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.topbar-title{font-family:'Lora',serif;font-size:17px;font-weight:600;letter-spacing:-0.02em;flex:1;}
+.topbar-date{font-size:11px;color:var(--text3);margin-top:1px;}
+.btn{padding:7px 14px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .12s;border:none;white-space:nowrap;}
+.btn-dark{background:var(--text);color:var(--bg);font-weight:500;}
+.btn-dark:hover{background:#333;}
+.btn-out{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-out:hover{background:var(--surface2);color:var(--text);}
+.btn-sm{padding:5px 11px;font-size:12px;}
+.btn-xs{padding:3px 8px;font-size:11px;}
+.scroll{flex:1;overflow-y:auto;padding:20px 24px;}
+
+/* ── Quick Capture Bar ── */
+.qc-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;flex-shrink:0;}
+.qc-row{display:flex;gap:8px;align-items:center;}
+.qc-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+.qc-input{flex:1;padding:8px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;}
+.qc-input:focus{border-color:var(--text);}
+.qc-input::placeholder{color:var(--text3);}
+.qc-resp{font-size:12px;color:var(--health);margin-top:5px;display:none;font-family:'DM Mono',monospace;}
+.qc-resp.show{display:block;}
+
+/* ── Year banner ── */
+.yr-banner{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.yr-bar-wrap{flex:1;min-width:80px;}
+.yr-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.yr-fill{height:100%;background:linear-gradient(90deg,var(--career),var(--health));border-radius:3px;}
+.yr-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;white-space:nowrap;}
+.yr-theme{font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--text2);white-space:nowrap;}
+
+/* ── Life grid ── */
+.life-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.area-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
+.area-card:hover{border-color:var(--border2);box-shadow:0 2px 10px rgba(0,0,0,.06);transform:translateY(-1px);}
+.area-top{height:3px;position:absolute;top:0;left:0;right:0;border-radius:12px 12px 0 0;}
+.area-emoji{font-size:18px;margin-bottom:5px;}
+.area-name{font-weight:500;font-size:12px;}
+.area-meta{font-size:10px;color:var(--text3);margin-top:1px;font-family:'DM Mono',monospace;}
+.area-prog{height:2px;background:var(--surface3);border-radius:2px;margin-top:8px;overflow:hidden;}
+.area-prog-fill{height:100%;border-radius:2px;transition:width .5s;}
+
+/* ── Section headers ── */
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:10px;margin-top:18px;}
+.sh:first-child{margin-top:0;}
+.sh-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);white-space:nowrap;}
+.sh-line{flex:1;height:1px;background:var(--border);}
+.sh-btn{font-size:11px;color:var(--text3);cursor:pointer;padding:2px 8px;border-radius:4px;border:1px solid var(--border);}
+.sh-btn:hover{color:var(--text);border-color:var(--border2);}
+
+/* ── Goal cards ── */
+.goals-list{display:flex;flex-direction:column;gap:8px;}
+.goal-card{background:var(--surface);border:1px solid var(--border);border-left-width:3px;border-radius:var(--radius);padding:13px 15px;cursor:pointer;transition:all .12s;}
+.goal-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.05);border-color:var(--border2);}
+.gc-hdr{display:flex;align-items:flex-start;gap:8px;margin-bottom:3px;}
+.gc-title{font-family:'Lora',serif;font-weight:500;font-size:14px;flex:1;line-height:1.4;}
+.gc-horizon{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;white-space:nowrap;margin-top:2px;}
+.gc-why{font-size:12px;color:var(--text2);font-style:italic;font-family:'Lora',serif;margin:3px 0 8px;line-height:1.5;}
+.gc-footer{display:flex;align-items:center;gap:8px;}
+.gc-tag{font-size:10px;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;white-space:nowrap;}
+.gc-prog{flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.gc-prog-fill{height:100%;border-radius:2px;transition:width .5s;}
+.gc-pct{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);}
+.gc-ct{font-size:10px;color:var(--text3);}
+
+/* ── Milestone rows ── */
+.ms-list{display:flex;flex-direction:column;gap:3px;}
+.ms-row{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all .12s;}
+.ms-row:hover{border-color:var(--border2);}
+.ms-row.done{opacity:.4;}
+.ms-chk{width:15px;height:15px;border-radius:3px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;margin-top:1px;}
+.ms-row.done .ms-chk{background:var(--health);border-color:var(--health);}
+.ms-ci{font-size:9px;color:white;display:none;}
+.ms-row.done .ms-ci{display:block;}
+.ms-body{flex:1;}
+.ms-name{font-size:13px;line-height:1.4;}
+.ms-row.done .ms-name{text-decoration:line-through;color:var(--text3);}
+.ms-meta{display:flex;align-items:center;gap:7px;margin-top:2px;flex-wrap:wrap;}
+.ms-atag{font-size:10px;padding:1px 5px;border-radius:3px;font-family:'DM Mono',monospace;}
+.ms-date{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;}
+.ms-date.ov{color:#d93025;font-weight:500;}
+.ms-date.sn{color:var(--finance);}
+
+/* ── Action rows ── */
+.act-list{display:flex;flex-direction:column;gap:3px;}
+.act-row{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);transition:all .12s;cursor:pointer;}
+.act-row:hover{border-color:var(--border2);}
+.act-row.done{opacity:.38;}
+.chk{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;cursor:pointer;}
+.act-row.done .chk{border-color:var(--health);background:var(--health);}
+.chk-i{font-size:9px;color:white;display:none;}
+.act-row.done .chk-i{display:block;}
+.act-name{flex:1;font-size:13px;line-height:1.3;}
+.act-row.done .act-name{text-decoration:line-through;color:var(--text3);}
+.a-adot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.a-gtag{font-size:10px;color:var(--text3);background:var(--surface2);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.a-due{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;white-space:nowrap;}
+.a-due.ov{color:#d93025;font-weight:500;}
+.a-due.sn{color:var(--finance);}
+.etag{font-size:10px;padding:2px 5px;border-radius:4px;white-space:nowrap;}
+.e-lo{background:#e8f5e9;color:#2e7d32;}
+.e-me{background:#fff8e1;color:#f57f17;}
+.e-hi{background:#fce4ec;color:#c2185b;}
+
+/* ── CoS bar ── */
+.cos-bar{border-top:1px solid var(--border);background:var(--surface);padding:10px 24px;flex-shrink:0;}
+.cos-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;font-family:'DM Mono',monospace;}
+.cos-chips{display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap;}
+.cos-chip{font-size:11px;padding:3px 9px;border:1px solid var(--border2);border-radius:20px;cursor:pointer;color:var(--text2);background:var(--surface2);transition:all .12s;white-space:nowrap;}
+.cos-chip:hover{background:var(--surface3);color:var(--text);}
+.cos-row{display:flex;gap:8px;}
+.cos-in{flex:1;padding:8px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;}
+.cos-in:focus{border-color:var(--text);}
+.cos-in::placeholder{color:var(--text3);}
+.cos-resp{margin-top:7px;padding:9px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:13px;color:var(--text2);border-left:3px solid var(--text3);display:none;line-height:1.6;}
+.cos-resp.show{display:block;}
+
+/* ── Modals ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .18s;}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:22px;width:520px;max-width:96vw;max-height:88vh;overflow-y:auto;transform:translateY(10px) scale(.99);transition:transform .18s;}
+.modal-bg.open .modal{transform:translateY(0) scale(1);}
+.modal-title{font-family:'Lora',serif;font-size:16px;font-weight:600;margin-bottom:16px;}
+.fi{margin-bottom:12px;}
+.fi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.fi-input{width:100%;padding:8px 11px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .12s;}
+.fi-input:focus{border-color:var(--text);}
+textarea.fi-input{resize:vertical;min-height:55px;}
+select.fi-input{cursor:pointer;}
+.fi-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.apicker{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.apbtn{padding:7px 4px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center;font-size:11px;transition:all .12s;color:var(--text2);}
+.apbtn:hover{border-color:var(--border2);}
+.apbtn.sel{font-weight:500;}
+.mf{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+
+/* ── Mobile view ── */
+.mobile-view{display:none;}
+.mobile-header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;gap:10px;}
+.mobile-title{font-family:'Lora',serif;font-size:16px;font-weight:600;flex:1;}
+.mobile-qc{padding:12px 18px;background:var(--surface);border-bottom:1px solid var(--border);}
+.mobile-qc-input{width:100%;padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;outline:none;color:var(--text);}
+.mobile-qc-input:focus{border-color:var(--text);}
+.mobile-scroll{flex:1;overflow-y:auto;padding:14px 18px;}
+.mobile-act-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+.mobile-chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-top:1px;}
+.mobile-act-row.done .mobile-chk{background:var(--health);border-color:var(--health);}
+.mobile-chk-i{font-size:11px;color:white;display:none;}
+.mobile-act-row.done .mobile-chk-i{display:block;}
+.mobile-act-body{flex:1;}
+.mobile-act-name{font-size:14px;line-height:1.4;}
+.mobile-act-row.done .mobile-act-name{text-decoration:line-through;color:var(--text3);}
+.mobile-act-meta{font-size:11px;color:var(--text3);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap;}
+.mobile-nav{display:flex;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;}
+.mobile-nav-btn{flex:1;padding:10px 4px;text-align:center;cursor:pointer;font-size:10px;color:var(--text3);transition:all .12s;border:none;background:transparent;font-family:'DM Sans',sans-serif;}
+.mobile-nav-btn.active{color:var(--career);font-weight:500;}
+.mobile-nav-icon{font-size:18px;display:block;margin-bottom:2px;}
+.mobile-area-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.mobile-area-chip{font-size:12px;padding:5px 10px;border-radius:20px;border:1px solid var(--border2);cursor:pointer;color:var(--text2);background:var(--surface2);}
+.mobile-area-chip.active{font-weight:500;}
+
+.pulse{animation:pulse 1.2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.empty{color:var(--text3);font-size:13px;padding:8px 0;}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ── Responsive ── */
+@media(max-width:700px){
+  .desktop-view{display:none!important;}
+  .mobile-view{display:flex!important;flex-direction:column;height:100vh;}
+}
+@media(min-width:701px){
+  .mobile-view{display:none!important;}
+  .desktop-view{display:flex;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ PIN LOCK ════════════════════════════════════════════════ -->
+<div class="pin-screen" id="pin-screen">
+  <div class="pin-logo">Life OS 2026</div>
+  <div class="pin-sub">"Relaunch Year"</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="pinKey('1')">1</button>
+    <button class="pin-btn" onclick="pinKey('2')">2</button>
+    <button class="pin-btn" onclick="pinKey('3')">3</button>
+    <button class="pin-btn" onclick="pinKey('4')">4</button>
+    <button class="pin-btn" onclick="pinKey('5')">5</button>
+    <button class="pin-btn" onclick="pinKey('6')">6</button>
+    <button class="pin-btn" onclick="pinKey('7')">7</button>
+    <button class="pin-btn" onclick="pinKey('8')">8</button>
+    <button class="pin-btn" onclick="pinKey('9')">9</button>
+    <button class="pin-btn" onclick="pinKey('')" style="visibility:hidden"></button>
+    <button class="pin-btn" onclick="pinKey('0')">0</button>
+    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="pin-err" id="pin-err"></div>
+  <div id="pin-set-mode" style="display:none;margin-top:20px;font-size:12px;color:var(--text3);text-align:center;line-height:1.8">
+    First time setup — enter a 4-digit PIN<br>
+    <span style="font-size:11px;color:var(--text3)">You'll only need this once on each device</span>
+  </div>
+</div>
+
+<!-- ══ DESKTOP ══════════════════════════════════════════════════ -->
+<div class="shell desktop-view">
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-title">Life OS 2026</div>
+    <div class="logo-sub">Personal Chief of Staff</div>
+    <div class="logo-theme">"Relaunch Year"</div>
+  </div>
+  <div class="nav-sec">Views</div>
+  <div class="nav-item active" id="nav-dashboard" onclick="go('dashboard')"><span>◉</span>Dashboard</div>
+  <div class="nav-item" id="nav-goals" onclick="go('goals')"><span>◎</span>Goals<span class="nav-badge" id="bg-goals">0</span></div>
+  <div class="nav-item" id="nav-milestones" onclick="go('milestones')"><span>◈</span>Milestones<span class="nav-badge" id="bg-ms">0</span></div>
+  <div class="nav-item" id="nav-actions" onclick="go('actions')"><span>◻</span>Actions<span class="nav-badge" id="bg-acts">0</span></div>
+  <div class="nav-item" id="nav-review" onclick="go('review')"><span>◷</span>Weekly Review</div>
+  <div class="nav-sec" style="margin-top:10px">Life Areas</div>
+  <div id="area-nav"></div>
+  <div class="sb-footer">
+    <div class="int-row" onclick="go('inbox')"><div class="idot" style="background:var(--health)"></div>Gmail — capture</div>
+    <div class="int-row" style="margin-top:4px" onclick="go('calendar')"><div class="idot" style="background:var(--career)"></div>Calendar — plan</div>
+    <div class="int-row" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px" onclick="lockApp()"><div class="idot" style="background:var(--text3)"></div>Lock app</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="flex:1">
+      <div class="topbar-title" id="view-title">Dashboard</div>
+      <div class="topbar-date" id="view-date"></div>
+    </div>
+    <div id="sync-status" title="Sync status" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);display:flex;align-items:center;gap:5px;cursor:pointer" onclick="manualSync()">
+      <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;display:inline-block"></span>
+      <span id="sync-label">not connected</span>
+    </div>
+    <button class="btn btn-out btn-sm" onclick="showSyncSetup()" title="Configure Google Sheets sync">⚙ Sync</button>
+    <button class="btn btn-out btn-sm" onclick="exportData()" title="Export all data as JSON">↑ Export</button>
+    <button class="btn btn-out btn-sm" onclick="importData()" title="Import data from JSON">↓ Import</button>
+    <button class="btn btn-out btn-sm" onclick="go('review')">Weekly Review</button>
+    <button class="btn btn-out btn-sm" onclick="openActModal()">+ Action</button>
+    <button class="btn btn-dark btn-sm" onclick="openGoalModal()">+ Goal</button>
+  </div>
+
+  <!-- Quick Capture -->
+  <div class="qc-bar">
+    <div class="qc-row">
+      <span class="qc-label">⚡ Quick capture</span>
+      <input class="qc-input" id="qc-input" placeholder='Type anything — "pay property taxes by April" or "schedule dentist" — press Enter' onkeydown="if(event.key==='Enter')quickCapture()">
+      <button class="btn btn-dark btn-sm" onclick="quickCapture()">Add</button>
+    </div>
+    <div class="qc-resp" id="qc-resp"></div>
+  </div>
+
+  <div class="scroll" id="main"></div>
+
+  <div class="cos-bar">
+    <div class="cos-label">✦ Personal CoS Agent</div>
+    <div class="cos-chips">
+      <div class="cos-chip" onclick="qa(this)">What's my focus this week?</div>
+      <div class="cos-chip" onclick="qa(this)">Am I on track for June offer?</div>
+      <div class="cos-chip" onclick="qa(this)">Which area am I neglecting?</div>
+      <div class="cos-chip" onclick="qa(this)">What's overdue?</div>
+      <div class="cos-chip" onclick="qa(this)">Son leaves in 5 months — am I present?</div>
+    </div>
+    <div class="cos-row">
+      <input class="cos-in" id="cos-in" placeholder='Ask anything or add an action — "How is my fitness goal going?" or "Add: call financial advisor by Friday"' onkeydown="if(event.key==='Enter')sendCoS()">
+      <button class="btn btn-dark" onclick="sendCoS()">Ask</button>
+    </div>
+    <div class="cos-resp" id="cos-resp"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══ MOBILE ═══════════════════════════════════════════════════ -->
+<div class="mobile-view">
+  <div class="mobile-header">
+    <div class="mobile-title" id="m-title">Life OS 2026</div>
+    <button class="btn btn-dark btn-sm" onclick="openActModal()">+ Add</button>
+  </div>
+  <div class="mobile-qc">
+    <input class="mobile-qc-input" id="m-qc" placeholder="Quick capture anything — tap Enter to add" onkeydown="if(event.key==='Enter')mobileCapture()">
+    <div class="qc-resp" id="m-qc-resp" style="margin-top:6px"></div>
+  </div>
+  <div class="mobile-scroll" id="m-main"></div>
+  <div class="mobile-nav">
+    <button class="mobile-nav-btn active" id="mn-today" onclick="mgo('today')"><span class="mobile-nav-icon">◉</span>Today</button>
+    <button class="mobile-nav-btn" id="mn-actions" onclick="mgo('actions')"><span class="mobile-nav-icon">◻</span>Actions</button>
+    <button class="mobile-nav-btn" id="mn-goals" onclick="mgo('goals')"><span class="mobile-nav-icon">◎</span>Goals</button>
+    <button class="mobile-nav-btn" id="mn-admin" onclick="mgo('admin')"><span class="mobile-nav-icon">🏡</span>Admin</button>
+    <button class="mobile-nav-btn" id="mn-cos" onclick="mgo('cos')"><span class="mobile-nav-icon">✦</span>CoS</button>
+  </div>
+</div>
+
+<!-- Sync Setup Modal -->
+<div class="modal-bg" id="sync-modal">
+  <div class="modal">
+    <div class="modal-title">⚙ Google Sheets Sync Setup</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">
+      Life OS syncs via <strong>JSONBin.io</strong> — a free cloud JSON store. Setup takes 2 minutes. The Master Key is needed to write data (reads are public).
+    </p>
+    <div style="background:var(--surface2);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:2;color:var(--text2)">
+      <strong style="color:var(--text);font-size:13px">Setup steps:</strong><br>
+      1. Go to <a href="https://jsonbin.io" target="_blank" style="color:var(--career)">jsonbin.io</a> → Sign up free<br>
+      2. Click <strong>Create Bin</strong> → paste <code style="background:var(--surface3);padding:1px 5px;border-radius:3px">{"init":true}</code> → Save<br>
+      3. Copy the <strong>Bin ID</strong> from the URL (long string after /b/)<br>
+      4. Go to <strong>Account → API Keys</strong> → copy your <strong>Master Key</strong> (starts with $2a$10$)<br>
+      5. Paste both below → Test → Save
+    </div>
+    <div class="fi-row">
+      <div class="fi">
+        <div class="fi-label">Bin ID</div>
+        <input class="fi-input" id="jb-bin-id" placeholder="65f3a...c2d" style="font-family:'DM Mono',monospace;font-size:12px">
+      </div>
+      <div class="fi">
+        <div class="fi-label">Master Key (required for writes)</div>
+        <input class="fi-input" id="jb-api-key" placeholder="$2a$10$..." type="password" style="font-family:'DM Mono',monospace;font-size:12px">
+      </div>
+    </div>
+    <div id="sync-test-result" style="font-size:12px;color:var(--health);margin-top:4px;display:none;font-family:'DM Mono',monospace"></div>
+    <div class="mf">
+      <button class="btn btn-out" onclick="closeM('sync-modal')">Cancel</button>
+      <button class="btn btn-out" onclick="testSyncUrl()">Test connection</button>
+      <button class="btn btn-dark" onclick="saveSyncUrl()">Save & connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- Goal Modal -->
+<div class="modal-bg" id="goal-modal">
+  <div class="modal">
+    <div class="modal-title">Add a Goal</div>
+    <div class="fi"><div class="fi-label">What do you want to achieve?</div><input class="fi-input" id="g-title" placeholder="e.g. Land a Director PM role at a B2B tech company"></div>
+    <div class="fi"><div class="fi-label">Life area</div><div class="apicker" id="g-apicker"></div></div>
+    <div class="fi"><div class="fi-label">Why does this matter?</div><textarea class="fi-input" id="g-why" placeholder="Your honest reason"></textarea></div>
+    <div class="fi-row">
+      <div class="fi"><div class="fi-label">Horizon</div><select class="fi-input" id="g-horizon"><option>1 month</option><option>3 months</option><option selected>6 months</option><option>1 year</option><option>Ongoing</option></select></div>
+      <div class="fi"><div class="fi-label">Target date</div><input class="fi-input" type="date" id="g-due"></div>
+    </div>
+    <div class="fi"><div class="fi-label">How will you measure success?</div><input class="fi-input" id="g-measure" placeholder="Specific, observable outcome"></div>
+    <div class="mf"><button class="btn btn-out" onclick="closeM('goal-modal')">Cancel</button><button class="btn btn-dark" onclick="saveGoal()">Save Goal</button></div>
+  </div>
+</div>
+
+<!-- Action Modal -->
+<div class="modal-bg" id="action-modal">
+  <div class="modal">
+    <div class="modal-title">Add an Action Item</div>
+    <div class="fi"><div class="fi-label">What needs to happen?</div><input class="fi-input" id="a-name" placeholder="Specific, doable next step"></div>
+    <div class="fi-row">
+      <div class="fi"><div class="fi-label">Linked goal (optional)</div><select class="fi-input" id="a-goal"></select></div>
+      <div class="fi"><div class="fi-label">Life area</div><select class="fi-input" id="a-area-sel"></select></div>
+    </div>
+    <div class="fi-row">
+      <div class="fi"><div class="fi-label">Due date</div><input class="fi-input" type="date" id="a-due"></div>
+      <div class="fi"><div class="fi-label">Energy needed</div><select class="fi-input" id="a-energy"><option value="low">🌱 Low</option><option value="med" selected>⚡ Medium</option><option value="high">🔥 High focus</option></select></div>
+    </div>
+    <div class="fi"><div class="fi-label">Notes</div><input class="fi-input" id="a-notes" placeholder="Context, links, blockers"></div>
+    <div class="mf"><button class="btn btn-out" onclick="closeM('action-modal')">Cancel</button><button class="btn btn-dark" onclick="saveAction()">Add Action</button></div>
+  </div>
+</div>
+
+<script>
+// ─── Areas ───────────────────────────────────────────────────────
+const AREAS=[
+  {id:'career', label:'Career',   emoji:'💼',color:'#5b6af5',soft:'rgba(91,106,245,0.1)'},
+  {id:'health', label:'Health',   emoji:'🏃',color:'#2dbe8c',soft:'rgba(45,190,140,0.1)'},
+  {id:'family', label:'Family',   emoji:'🏠',color:'#f0804a',soft:'rgba(240,128,74,0.1)'},
+  {id:'finance',label:'Finance',  emoji:'💰',color:'#e6b830',soft:'rgba(230,184,48,0.1)'},
+  {id:'growth', label:'Learning', emoji:'📚',color:'#a855f7',soft:'rgba(168,85,247,0.1)'},
+  {id:'social', label:'Social',   emoji:'🤝',color:'#ef4d6f',soft:'rgba(239,77,111,0.1)'},
+  {id:'admin',  label:'Admin',    emoji:'🏡',color:'#64748b',soft:'rgba(100,116,139,0.1)'},
+];
+const ga=id=>AREAS.find(a=>a.id===id)||AREAS[0];
+
+// ─── Default State ────────────────────────────────────────────────
+function mkState(){
+  const t=d=>{const x=new Date();x.setDate(x.getDate()+d);return x.toISOString().split('T')[0];};
+  return {
+    view:'dashboard', mview:'today',
+    goals:[
+      {id:'g1',title:'Land a Principal PM or Director PM role at a B2B tech platform company',area:'career',why:'Return to work that energizes me — platforms, ecosystems, AI, customer impact.',horizon:'6 months',due:'2026-06-30',measure:'Signed offer letter at a company I\'m genuinely excited about'},
+      {id:'g2',title:'Build credible AI fluency as a product leader through hands-on building',area:'growth',why:'AI is transforming the PM role — I need to lead with it, not catch up to it.',horizon:'1 year',due:'2026-12-31',measure:'3+ AI projects shipped, daily AI workflow, can speak with authority on AI products'},
+      {id:'g3',title:'Rebuild systematic fitness and complete a sprint triathlon',area:'health',why:'Energy, confidence, and proving I can still do hard physical things.',horizon:'6 months',due:'2026-10-01',measure:'Cross a sprint triathlon finish line'},
+      {id:'g4',title:'Protect financial stability and grow long-term wealth through career transition',area:'finance',why:'Financial security changes how I make every other decision.',horizon:'1 year',due:'2026-12-31',measure:'Job landed within 6 months, retirement savings growing, liquid reserves healthy'},
+      {id:'g5',title:'Be fully present for my son\'s last months at home before Cornell',area:'family',why:'He leaves in August — this chapter closes. Be present for it.',horizon:'6 months',due:'2026-08-31',measure:'Meaningful shared experiences completed, strong intentional Cornell send-off'},
+      {id:'g6',title:'Reactivate my network and rebuild a social life outside family',area:'social',why:'Career success depends on it — and all-work-all-family isn\'t sustainable.',horizon:'1 year',due:'2026-12-31',measure:'20+ meaningful reconnections, 3-4 active friendships, weekly social rhythm'},
+    ],
+    milestones:[
+      // Career
+      {id:'m1', goal:'g1',area:'career', name:'Resume finalized — Cisco/AWS platform experience leading',due:'2026-04-07',done:false},
+      {id:'m2', goal:'g1',area:'career', name:'Target company list of 20 B2B platform companies built',due:'2026-04-07',done:false},
+      {id:'m3', goal:'g1',area:'career', name:'Pipeline tracker updated with Status column',due:'2026-03-26',done:false},
+      {id:'m4', goal:'g1',area:'career', name:'15 warm Cisco/AWS contacts reactivated',due:'2026-04-30',done:false},
+      {id:'m5', goal:'g1',area:'career', name:'5+ first screens or recruiter calls completed',due:'2026-04-15',done:false},
+      {id:'m6', goal:'g1',area:'career', name:'3+ companies at hiring manager stage simultaneously',due:'2026-04-30',done:false},
+      {id:'m7', goal:'g1',area:'career', name:'First 3 STAR stories written and reviewed',due:'2026-04-15',done:false},
+      {id:'m8', goal:'g1',area:'career', name:'Full STAR story bank complete — 6-8 stories mapped to LPs',due:'2026-04-30',done:false},
+      {id:'m9', goal:'g1',area:'career', name:'Mock interview completed in Career Advisor Project',due:'2026-05-01',done:false},
+      {id:'m10',goal:'g1',area:'career', name:'3+ companies at final round stage',due:'2026-05-15',done:false},
+      {id:'m11',goal:'g1',area:'career', name:'Offer(s) in hand and evaluating',due:'2026-06-15',done:false},
+      {id:'m12',goal:'g1',area:'career', name:'Offer signed — new role confirmed ✓',due:'2026-06-30',done:false},
+      // Learning
+      {id:'m13',goal:'g2',area:'growth', name:'DeepLearning.AI Course 2 completed (neural networks)',due:'2026-03-29',done:false},
+      {id:'m14',goal:'g2',area:'growth', name:'DeepLearning.AI Course 3 completed — ML Specialization done',due:'2026-04-05',done:false},
+      {id:'m15',goal:'g2',area:'growth', name:'Phase 2 short courses 1-3 completed (prompt eng, LLM APIs, LangChain)',due:'2026-04-12',done:false},
+      {id:'m16',goal:'g2',area:'growth', name:'Phase 2 short courses 4-6 completed (RAG, LangGraph, agents)',due:'2026-04-19',done:false},
+      {id:'m17',goal:'g2',area:'growth', name:'Interview prep AI app v1 built and in use',due:'2026-04-19',done:false},
+      {id:'m18',goal:'g2',area:'growth', name:'Phase 3 deep dives complete — technical AI depth done',due:'2026-04-26',done:false},
+      {id:'m19',goal:'g2',area:'growth', name:'Personal AI narrative and story crafted for interviews',due:'2026-05-03',done:false},
+      {id:'m20',goal:'g2',area:'growth', name:'Claude Project set up with full personal context',due:'2026-04-15',done:false},
+      {id:'m21',goal:'g2',area:'growth', name:'Fantasy baseball AI automation project built',due:'2026-05-15',done:false},
+      {id:'m22',goal:'g2',area:'growth', name:'AI PM toolkit project built (PRD assistant, competitive analysis)',due:'2026-06-15',done:false},
+      {id:'m23',goal:'g2',area:'growth', name:'AI learnings documented — what works, what breaks',due:'2026-09-30',done:false},
+      // Health
+      {id:'m24',goal:'g3',area:'health', name:'Bay to Breakers registered (May 17)',due:'2026-03-25',done:false},
+      {id:'m25',goal:'g3',area:'health', name:'Baseline logged — weight, BF%, waist, tracking sheet set up',due:'2026-03-25',done:false},
+      {id:'m26',goal:'g3',area:'health', name:'Apple Health integrations confirmed — Peloton, scale, Watch syncing',due:'2026-03-26',done:false},
+      {id:'m27',goal:'g3',area:'health', name:'Week 1 training schedule started — 4x/week',due:'2026-03-30',done:false},
+      {id:'m28',goal:'g3',area:'health', name:'30-day body comp check-in — vs. Q2 targets',due:'2026-04-30',done:false},
+      {id:'m29',goal:'g3',area:'health', name:'Bay to Breakers completed 🎽 (12k, May 17)',due:'2026-05-17',done:false},
+      {id:'m30',goal:'g3',area:'health', name:'10k race entered and completed',due:'2026-07-31',done:false},
+      {id:'m31',goal:'g3',area:'health', name:'Sprint triathlon registered — Pacific Grove or Santa Cruz',due:'2026-07-31',done:false},
+      {id:'m32',goal:'g3',area:'health', name:'Q2 body comp check — 190 lbs, 23% BF, 33" waist',due:'2026-06-30',done:false},
+      {id:'m33',goal:'g3',area:'health', name:'Sprint triathlon completed 🏁',due:'2026-10-01',done:false},
+      {id:'m34',goal:'g3',area:'health', name:'Q3 body comp check — 182 lbs, 20% BF, 31" waist',due:'2026-09-30',done:false},
+      // Finance
+      {id:'m35',goal:'g4',area:'finance',name:'2025 IRA contribution made before April 15 deadline',due:'2026-04-14',done:false},
+      {id:'m36',goal:'g4',area:'finance',name:'Cornell 4-year cost model built, budget adjusted',due:'2026-04-30',done:false},
+      {id:'m37',goal:'g4',area:'finance',name:'Monthly burn rate calculated — precise runway known',due:'2026-04-07',done:false},
+      {id:'m38',goal:'g4',area:'finance',name:'Investment portfolio reviewed and rebalanced',due:'2026-04-30',done:false},
+      {id:'m39',goal:'g4',area:'finance',name:'Previous employer 401k accounts audited and consolidated',due:'2026-04-15',done:false},
+      {id:'m40',goal:'g4',area:'finance',name:'Roth IRA conversion analysis completed',due:'2026-06-30',done:false},
+      {id:'m41',goal:'g4',area:'finance',name:'Estate planning initiated — wills, trust, beneficiaries reviewed',due:'2026-09-30',done:false},
+      {id:'m42',goal:'g4',area:'finance',name:'Retirement contributions resumed post-hire',due:'2026-08-01',done:false},
+      {id:'m43',goal:'g4',area:'finance',name:'Investing app expanded with financial dashboard',due:'2026-12-31',done:false},
+      // Family
+      {id:'m44',goal:'g5',area:'family', name:'Spring break Bay Area plan finalized',due:'2026-03-28',done:false},
+      {id:'m45',goal:'g5',area:'family', name:'Alcatraz tickets booked for spring break',due:'2026-03-25',done:false},
+      {id:'m46',goal:'g5',area:'family', name:'Pre-Cornell bucket list conversation with son — his top 10',due:'2026-04-05',done:false},
+      {id:'m47',goal:'g5',area:'family', name:'NYC Thanksgiving hotel booked',due:'2026-03-30',done:false},
+      {id:'m48',goal:'g5',area:'family', name:'Kauai family trip decided and booked',due:'2026-04-30',done:false},
+      {id:'m49',goal:'g5',area:'family', name:'Regular golf with daughter — every other Saturday established',due:'2026-04-01',done:false},
+      {id:'m50',goal:'g5',area:'family', name:'Dallas visit scheduled — specific dates on calendar',due:'2026-04-30',done:false},
+      {id:'m51',goal:'g5',area:'family', name:'Son\'s Bay Area bucket list experiences completed',due:'2026-08-10',done:false},
+      {id:'m52',goal:'g5',area:'family', name:'Kauai family vacation completed',due:'2026-07-31',done:false},
+      {id:'m53',goal:'g5',area:'family', name:'Cornell move-in done intentionally — milestone celebrated 🎓',due:'2026-08-20',done:false},
+      {id:'m54',goal:'g5',area:'family', name:'Tahoe ski trip Dec 26-30 booked',due:'2026-05-01',done:false},
+      // Social
+      {id:'m55',goal:'g6',area:'social', name:'Top-30 network map built — Cisco, AWS, personal friends',due:'2026-04-05',done:false},
+      {id:'m56',goal:'g6',area:'social', name:'Network tracker tab added to Google Sheet',due:'2026-03-26',done:false},
+      {id:'m57',goal:'g6',area:'social', name:'15 outreach messages sent — A-tier contacts first',due:'2026-03-28',done:false},
+      {id:'m58',goal:'g6',area:'social', name:'10 responses received, 5 calls scheduled',due:'2026-04-07',done:false},
+      {id:'m59',goal:'g6',area:'social', name:'5 real conversations completed — calls or coffee',due:'2026-04-15',done:false},
+      {id:'m60',goal:'g6',area:'social', name:'3+ referrals submitted at target companies',due:'2026-04-30',done:false},
+      {id:'m61',goal:'g6',area:'social', name:'3-4 friendships with recurring monthly rhythm',due:'2026-06-30',done:false},
+      {id:'m62',goal:'g6',area:'social', name:'Weekly social activity outside family — consistent',due:'2026-09-30',done:false},
+    ],
+    actions:[
+      // Career — this week
+      {id:'a1', goal:'g1',area:'career', name:'Complete referral outreach — finish LinkedIn contacts at target companies', energy:'high',due:'2026-03-26',time:'2 hrs',notes:'A-tier first: Databricks, Salesforce, ServiceNow, Google Cloud, Microsoft',done:false,source:null},
+      {id:'a2', goal:'g1',area:'career', name:'Rewrite LinkedIn headline and About section — platform + AI story', energy:'med', due:'2026-03-28',time:'1 hr',  notes:'Position as B2B platform PM who builds with AI',done:false,source:null},
+      {id:'a3', goal:'g1',area:'career', name:'Add Status column to job tracking Google Sheet', energy:'low', due:'2026-03-25',time:'15 min',notes:'Applied / Referral Pending / Screen Scheduled / In Process / Pass',done:false,source:null},
+      {id:'a4', goal:'g1',area:'career', name:'Tighten outreach message template — under 150 words', energy:'med', due:'2026-03-26',time:'30 min',notes:'Use Career Advisor Project to workshop this',done:false,source:null},
+      {id:'a5', goal:'g1',area:'career', name:'Prioritize top 10 roles from target list — best fit first', energy:'med', due:'2026-03-26',time:'30 min',notes:'Databricks Staff PM, Salesforce Director Agentforce, ServiceNow Sr Principal PM look strong',done:false,source:null},
+      {id:'a6', goal:'g1',area:'career', name:'Follow up on 10 submitted applications — check status', energy:'low', due:'2026-03-28',time:'30 min',notes:'If referral contact at company — ping them',done:false,source:null},
+      {id:'a7', goal:'g1',area:'career', name:'Update LinkedIn Open to Work — visible to recruiters only', energy:'low', due:'2026-03-25',time:'15 min',notes:'Principal PM, Director PM, B2B, Platform, AI Product',done:false,source:null},
+      {id:'a8', goal:'g1',area:'career', name:'Identify your 6-8 best STAR stories from Cisco and AWS', energy:'med', due:'2026-04-05',time:'1 hr',  notes:'List situations first, don\'t write yet. Best platform launch, ecosystem win, bold call, failure/recovery',done:false,source:null},
+      {id:'a9', goal:'g1',area:'career', name:'Write first 2 STAR stories in full', energy:'high',due:'2026-04-10',time:'2 hrs', notes:'Start with strongest — biggest product impact story',done:false,source:null},
+      // Learning
+      {id:'a10',goal:'g2',area:'growth', name:'Finish DeepLearning.AI Course 2 this week', energy:'high',due:'2026-03-29',time:'4 hrs', notes:'Neural networks, backprop, TF — push through',done:false,source:null},
+      {id:'a11',goal:'g2',area:'growth', name:'Add AI learning plan to Claude Project', energy:'low', due:'2026-03-25',time:'15 min',notes:'Upload HTML learning plan file to Personal CoS Project',done:false,source:null},
+      {id:'a12',goal:'g2',area:'growth', name:'Do first competitive research brief — Databricks AI strategy', energy:'low', due:'2026-03-28',time:'30 min',notes:'Use Career Advisor Project: brief me on Databricks AI platform strategy and top PM interview questions',done:false,source:null},
+      {id:'a13',goal:'g2',area:'growth', name:'Start AI limitations log — doc for what Claude gets wrong', energy:'low', due:'2026-03-28',time:'15 min',notes:'Every surprise — good or bad — is interview content by May',done:false,source:null},
+      {id:'a14',goal:'g2',area:'growth', name:'Document 3 existing AI projects for portfolio', energy:'med', due:'2026-04-10',time:'1 hr',  notes:'Investing app, Life OS, CoS agent — what it does, what you learned, limitations',done:false,source:null},
+      // Health
+      {id:'a15',goal:'g3',area:'health', name:'Register for Bay to Breakers — baytobreakers.com', energy:'low', due:'2026-03-24',time:'10 min',notes:'$65-85 — do it today before talking yourself out of it',done:false,source:null},
+      {id:'a16',goal:'g3',area:'health', name:'Log baseline in Google Sheet — weight 202, BF 27.2%, waist 35.5"', energy:'low', due:'2026-03-25',time:'10 min',notes:'Day 1 baseline. You\'ll look back at this in 90 days.',done:false,source:null},
+      {id:'a17',goal:'g3',area:'health', name:'Confirm Apple Health syncing — Peloton, smart scale, Apple Watch', energy:'low', due:'2026-03-26',time:'20 min',notes:'One dashboard, no manual entry',done:false,source:null},
+      {id:'a18',goal:'g3',area:'health', name:'Add Bay to Breakers 8-week run progression to calendar', energy:'low', due:'2026-03-27',time:'20 min',notes:'Week 1: 3 runs of 3-4 miles easy. Add 0.5 miles to long run each week.',done:false,source:null},
+      {id:'a19',goal:'g3',area:'health', name:'Start Week 1 training — Monday March 30', energy:'med', due:'2026-03-30',time:'1 hr',  notes:'Monday: weights AM, yoga PM. Just start.',done:false,source:null},
+      {id:'a20',goal:'g3',area:'health', name:'Implement 4 diet rules starting Monday', energy:'low', due:'2026-03-30',time:'0',   notes:'Protein first, cut liquid calories, carbs around workouts, portion control',done:false,source:null},
+      // Finance / Admin
+      {id:'a21',goal:'g4',area:'finance',name:'Make 2025 IRA contribution — deadline April 15', energy:'med', due:'2026-04-10',time:'30 min',notes:'Max contribution: $7,000 (or $8,000 if 50+)',done:false,source:null},
+      {id:'a22',goal:'g4',area:'finance',name:'File federal and state taxes — or file extension', energy:'high',due:'2026-04-14',time:'2 hrs', notes:'Deadline April 15. Extension = more time to file, not to pay',done:false,source:null},
+      {id:'a23',goal:'g4',area:'finance',name:'Check property tax due date for your county', energy:'low', due:'2026-03-28',time:'10 min',notes:'Santa Clara/San Mateo — look up exact date and amount',done:false,source:null},
+      {id:'a24',goal:'g4',area:'finance',name:'Confirm health insurance transfer to wife\'s company', energy:'med', due:'2026-04-01',time:'30 min',notes:'Check when current coverage ends and enrollment deadline',done:false,source:null},
+      {id:'a25',goal:'g4',area:'finance',name:'Calculate monthly burn rate and precise runway', energy:'med', due:'2026-04-07',time:'1 hr',  notes:'Fixed + variable + Cornell starting Sept. Divide liquid reserves by that number.',done:false,source:null},
+      {id:'a26',goal:'g4',area:'finance',name:'Research fee-only financial planner for estate/tax planning', energy:'low', due:'2026-04-30',time:'1 hr',  notes:'NAPFA.org — find fiduciary, fee-only advisor for Roth conversion + estate planning',done:false,source:null},
+      // Family
+      {id:'a27',goal:'g5',area:'family', name:'Book Alcatraz tickets — sells out weeks ahead', energy:'low', due:'2026-03-24',time:'10 min',notes:'alcatrazcruises.com — book for spring break week',done:false,source:null},
+      {id:'a28',goal:'g5',area:'family', name:'Book NYC Thanksgiving hotel — prices spike fast', energy:'low', due:'2026-03-30',time:'20 min',notes:'Midtown, Marriott/Hyatt points if possible. 8 months out = good availability now',done:false,source:null},
+      {id:'a29',goal:'g5',area:'family', name:'Finalize spring break Bay Area week plan', energy:'low', due:'2026-03-28',time:'30 min',notes:'Base: Alcatraz, Mt Tam hike, Monterey day trip, SF neighborhood day, Giants game if scheduled',done:false,source:null},
+      {id:'a30',goal:'g5',area:'family', name:'Have pre-Cornell conversation with son — his bucket list', energy:'low', due:'2026-04-05',time:'1 hr',  notes:'His agenda. Ask: what do you want to do before you leave?',done:false,source:null},
+      {id:'a31',goal:'g5',area:'family', name:'Set up recurring golf dates with daughter — every other Saturday', energy:'low', due:'2026-03-25',time:'10 min',notes:'Put in calendar now. 8 AM. Done.',done:false,source:null},
+      {id:'a32',goal:'g5',area:'family', name:'Text parents — schedule Dallas visit for May or June', energy:'low', due:'2026-04-07',time:'10 min',notes:'Ask what works for them, then book flights',done:false,source:null},
+      {id:'a33',goal:'g5',area:'family', name:'Decide Kauai trip dates and book — July window', energy:'med', due:'2026-04-30',time:'1 hr',  notes:'2 weeks in July before Cornell prep takes over August',done:false,source:null},
+      {id:'a34',goal:'g5',area:'family', name:'Book Tahoe ski trip Dec 26-30', energy:'low', due:'2026-05-01',time:'30 min',notes:'Holiday week fills fast — book by May',done:false,source:null},
+      // Social
+      {id:'a35',goal:'g6',area:'social', name:'Add Network tab to Google Sheet', energy:'low', due:'2026-03-26',time:'20 min',notes:'Columns: Name, Company, Relationship, Contacted, Response, Call Scheduled, Referral Submitted',done:false,source:null},
+      {id:'a36',goal:'g6',area:'social', name:'Finish LinkedIn contact filter — sort by warmth and target company', energy:'low', due:'2026-03-25',time:'1 hr',  notes:'A tier: strong connection. B: solid. C: loose. Target companies first.',done:false,source:null},
+      {id:'a37',goal:'g6',area:'social', name:'Send 15 outreach messages — A-tier contacts this week', energy:'med', due:'2026-03-28',time:'2 hrs', notes:'One specific personal detail per message. Under 150 words. Volume matters.',done:false,source:null},
+      {id:'a38',goal:'g6',area:'social', name:'Follow up on LinkedIn chats already started', energy:'low', due:'2026-03-25',time:'30 min',notes:'No response in 5+ days? Send follow-up. Have response? Ask for a call.',done:false,source:null},
+      // Admin / Tactical
+      {id:'a39',goal:null,area:'admin',  name:'Get vision exam and new prescription glasses', energy:'low', due:'2026-04-30',time:'2 hrs', notes:'Schedule exam first, then order glasses',done:false,source:null},
+      {id:'a40',goal:null,area:'admin',  name:'Start automating fantasy baseball data tracking with Claude', energy:'med', due:'2026-04-30',time:'2 hrs', notes:'Great AI project — data pipeline + decision assistant. Less time, better decisions.',done:false,source:null},
+      {id:'a41',goal:null,area:'admin',  name:'Bocce ball practice before league', energy:'low', due:'2026-04-15',time:'1 hr',  notes:'Find a court or practice setup',done:false,source:null},
+    ],
+  };
+}
+
+// ─── JSONBin.io Sync ─────────────────────────────────────────────
+const LS_KEY='los26b';
+const LS_BIN='los26b_bin';
+const LS_APIKEY='los26b_key';
+let JB_BIN=localStorage.getItem(LS_BIN)||'';
+let JB_KEY=localStorage.getItem(LS_APIKEY)||'';
+let syncTimer=null;
+
+function jbHeaders(){
+  return{
+    'Content-Type':'application/json',
+    'X-Master-Key':JB_KEY,
+    'X-Bin-Versioning':'false'
+  };
+}
+function jbUrl(){return`https://api.jsonbin.io/v3/b/${JB_BIN}`;}
+function isConfigured(){return!!(JB_BIN&&JB_KEY);}
+
+function setSyncStatus(state,msg){
+  const dot=document.getElementById('sync-dot');
+  const label=document.getElementById('sync-label');
+  if(!dot||!label)return;
+  const colors={ok:'#2dbe8c',err:'#d93025',syncing:'#e6b830',off:'#a8a39b'};
+  dot.style.background=colors[state]||colors.off;
+  label.textContent=msg;
+}
+
+async function loadS(){
+  // Load localStorage immediately for instant render
+  try{
+    const d=localStorage.getItem(LS_KEY);
+    if(d){const p=JSON.parse(d);S={...mkState(),...p};}
+  }catch(e){}
+  if(!isConfigured()){setSyncStatus('off','not connected');return;}
+  setSyncStatus('syncing','loading…');
+  try{
+    const res=await fetch(jbUrl(),{method:'GET',headers:jbHeaders()});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    const remote=data.record;
+    if(remote&&remote.goals&&remote.actions){
+      S={...mkState(),...remote};
+      localStorage.setItem(LS_KEY,JSON.stringify(remote));
+      setSyncStatus('ok','synced ✓');
+    } else {
+      // Bin is empty — push local state up
+      await pushToJB();
+    }
+  }catch(err){
+    setSyncStatus('err','load failed');
+    console.error('JSONBin load error:',err);
+  }
+}
+
+async function pushToJB(){
+  if(!isConfigured())return false;
+  try{
+    const body=JSON.stringify(S);
+    const res=await fetch(jbUrl(),{
+      method:'PUT',
+      headers:jbHeaders(),
+      body
+    });
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    localStorage.setItem(LS_KEY,body);
+    return true;
+  }catch(e){
+    console.error('JSONBin push error:',e);
+    return false;
+  }
+}
+
+function saveS(){
+  try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}
+  if(syncTimer)clearTimeout(syncTimer);
+  if(isConfigured()){
+    setSyncStatus('syncing','saving…');
+    syncTimer=setTimeout(async()=>{
+      const ok=await pushToJB();
+      setSyncStatus(ok?'ok':'err',ok?'saved ✓':'save failed');
+    },1200);
+  }
+}
+
+async function manualSync(){
+  if(!isConfigured()){showSyncSetup();return;}
+  setSyncStatus('syncing','syncing…');
+  await loadS();
+  renderSB();render();renderMobile();
+}
+
+function showSyncSetup(){
+  document.getElementById('jb-bin-id').value=JB_BIN||'';
+  document.getElementById('jb-api-key').value=JB_KEY||'';
+  const r=document.getElementById('sync-test-result');
+  if(r)r.style.display='none';
+  openM('sync-modal');
+}
+
+async function testSyncUrl(){
+  const bin=document.getElementById('jb-bin-id').value.trim();
+  const key=document.getElementById('jb-api-key').value.trim();
+  const res=document.getElementById('sync-test-result');
+  res.style.display='block';
+  res.style.color='var(--finance)';
+  res.textContent='Testing connection…';
+  if(!bin||!key){
+    res.style.color='#d93025';
+    res.textContent='⚠ Enter both Bin ID and Master Key.';
+    return;
+  }
+  try{
+    const r=await fetch(`https://api.jsonbin.io/v3/b/${bin}`,{
+      method:'GET',
+      headers:{'X-Master-Key':key,'X-Bin-Versioning':'false','Content-Type':'application/json'}
+    });
+    if(r.status===401){
+      res.style.color='#d93025';
+      res.textContent='✗ Invalid API key — check your Master Key.';
+      return;
+    }
+    if(r.status===404){
+      res.style.color='#d93025';
+      res.textContent='✗ Bin not found — check your Bin ID.';
+      return;
+    }
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    res.style.color='var(--health)';
+    res.textContent='✓ Connected! Ready to sync.';
+  }catch(e){
+    res.style.color='#d93025';
+    res.textContent='✗ Connection failed — check your credentials.';
+  }
+}
+
+function saveSyncUrl(){
+  const bin=document.getElementById('jb-bin-id').value.trim();
+  const key=document.getElementById('jb-api-key').value.trim();
+  if(!bin||!key){alert('Both Bin ID and Master Key are required.');return;}
+  JB_BIN=bin;JB_KEY=key;
+  localStorage.setItem(LS_BIN,bin);
+  localStorage.setItem(LS_APIKEY,key);
+  closeM('sync-modal');
+  setSyncStatus('syncing','connecting…');
+  pushToJB().then(ok=>{
+    setSyncStatus(ok?'ok':'err',ok?'connected ✓':'check credentials');
+    showCoSR(ok?'✓ Connected to JSONBin! Data syncing across devices.':'⚠ Could not connect — check your Bin ID and API Key.');
+  });
+}
+
+function copyGAS(){
+  // Legacy — no longer used but kept to avoid errors
+  showCoSR('Use JSONBin.io for sync — see ⚙ Sync setup.');
+}
+
+let S=mkState();
+
+const uid=p=>p+Date.now()+Math.random().toString(36).slice(2,4);
+const tod=()=>new Date().toISOString().split('T')[0];
+const nfn=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];};
+const gg=id=>S.goals.find(g=>g.id===id);
+
+function dd(ds){if(!ds)return null;return Math.round((new Date(ds)-new Date())/86400000);}
+function dcls(ds){const d=dd(ds);if(d===null)return '';if(d<0)return 'ov';if(d<=3)return 'sn';return '';}
+function dlbl(ds){const d=dd(ds);if(d===null)return '';if(d<0)return`overdue ${Math.abs(d)}d`;if(d===0)return'today';if(d<=3)return`${d}d`;return ds;}
+function etag(e){if(e==='low')return`<span class="etag e-lo">🌱</span>`;if(e==='high')return`<span class="etag e-hi">🔥</span>`;return`<span class="etag e-me">⚡</span>`;}
+function gpct(gid){const ms=S.milestones.filter(m=>m.goal===gid);if(!ms.length)return 0;return Math.round(ms.filter(m=>m.done).length/ms.length*100);}
+function yrpct(){const s=new Date('2026-01-01'),e=new Date('2026-12-31'),n=new Date();return Math.min(100,Math.round((n-s)/(e-s)*100));}
+
+// ─── Sidebar ──────────────────────────────────────────────────────
+function renderSB(){
+  const oa=S.actions.filter(a=>!a.done).length;
+  const om=S.milestones.filter(m=>!m.done).length;
+  const ov=S.actions.filter(a=>!a.done&&a.due&&dd(a.due)<0).length;
+  document.getElementById('bg-goals').textContent=S.goals.length;
+  document.getElementById('bg-ms').textContent=om;
+  document.getElementById('bg-acts').textContent=oa;
+  const b=document.getElementById('bg-acts');
+  ov?b.classList.add('urg'):b.classList.remove('urg');
+  document.getElementById('area-nav').innerHTML=AREAS.map(a=>{
+    const n=S.actions.filter(x=>x.area===a.id&&!x.done).length;
+    return`<div class="nav-item ${S.view==='area_'+a.id?'active':''}" onclick="go('area_${a.id}')">
+      <div class="adot" style="background:${a.color}"></div>${a.label}
+      ${n?`<span class="nav-badge">${n}</span>`:''}
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.nav-item[id^="nav-"]').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('nav-'+S.view);
+  if(el)el.classList.add('active');
+}
+
+// ─── Desktop views ────────────────────────────────────────────────
+function go(v){
+  S.view=v;
+  const titles={dashboard:'Dashboard',goals:'Goals',milestones:'Milestones',actions:'Action Items',review:'Weekly Review',inbox:'Gmail Inbox',calendar:'Calendar'};
+  const aid=v.startsWith('area_')?v.replace('area_',''):null;
+  document.getElementById('view-title').textContent=aid?`${ga(aid).emoji} ${ga(aid).label}`:(titles[v]||'');
+  renderSB();render();
+}
+
+function render(){
+  const el=document.getElementById('main'),v=S.view;
+  if(v==='dashboard')rDash(el);
+  else if(v==='goals')rGoals(el,null);
+  else if(v==='milestones')rMs(el,null);
+  else if(v==='actions')rActs(el,null,null);
+  else if(v==='review')rReview(el);
+  else if(v==='inbox')rInbox(el);
+  else if(v==='calendar')rCal(el);
+  else if(v.startsWith('area_'))rArea(el,v.replace('area_',''));
+}
+
+function rDash(el){
+  const p=yrpct();
+  const ov=S.actions.filter(a=>!a.done&&a.due&&dd(a.due)<0);
+  const dt=S.actions.filter(a=>!a.done&&a.due&&dd(a.due)===0);
+  const ds=S.actions.filter(a=>!a.done&&a.due&&dd(a.due)>0&&dd(a.due)<=5);
+  const ums=S.milestones.filter(m=>!m.done&&m.due&&dd(m.due)<=21&&dd(m.due)>=0).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,6);
+  el.innerHTML=`
+    <div class="yr-banner">
+      <div class="yr-label">2026</div>
+      <div class="yr-bar-wrap"><div class="yr-bar"><div class="yr-fill" style="width:${p}%"></div></div></div>
+      <div class="yr-label">${p}% of year</div>
+      <div class="yr-theme">"Relaunch Year"</div>
+    </div>
+    <div class="sh"><div class="sh-title">Life Areas</div><div class="sh-line"></div></div>
+    <div class="life-grid">${AREAS.map(aCard).join('')}</div>
+    ${ov.length?`<div class="sh"><div class="sh-title" style="color:#d93025">⚠ Overdue (${ov.length})</div><div class="sh-line"></div></div><div class="act-list" style="margin-bottom:8px">${ov.map(aRow).join('')}</div>`:''}
+    ${dt.length?`<div class="sh"><div class="sh-title">Due Today (${dt.length})</div><div class="sh-line"></div></div><div class="act-list" style="margin-bottom:8px">${dt.map(aRow).join('')}</div>`:''}
+    ${ds.length?`<div class="sh"><div class="sh-title">Due This Week</div><div class="sh-line"></div></div><div class="act-list" style="margin-bottom:8px">${ds.map(aRow).join('')}</div>`:''}
+    ${ums.length?`<div class="sh"><div class="sh-title">Milestones — next 3 weeks</div><div class="sh-line"></div></div><div class="ms-list">${ums.map(msRow).join('')}</div>`:''}
+  `;
+}
+
+function aCard(a){
+  const goals=S.goals.filter(g=>g.area===a.id);
+  const oa=S.actions.filter(x=>x.area===a.id&&!x.done).length;
+  const avg=goals.length?Math.round(goals.reduce((s,g)=>s+gpct(g.id),0)/goals.length):0;
+  return`<div class="area-card" onclick="go('area_${a.id}')">
+    <div class="area-top" style="background:${a.color}"></div>
+    <div class="area-emoji">${a.emoji}</div>
+    <div class="area-name">${a.label}</div>
+    <div class="area-meta">${goals.length?goals.length+' goal'+(goals.length!==1?'s':''):'Admin'} · ${oa} open</div>
+    <div class="area-prog"><div class="area-prog-fill" style="width:${avg}%;background:${a.color}"></div></div>
+  </div>`;
+}
+
+function rGoals(el,fa){
+  const goals=fa?S.goals.filter(g=>g.area===fa):S.goals;
+  el.innerHTML=`<div class="sh"><div class="sh-title">${fa?ga(fa).label+' ':''}Goals (${goals.length})</div><div class="sh-line"></div><div class="sh-btn" onclick="openGoalModal()">+ Goal</div></div>
+  <div class="goals-list">${goals.length?goals.map(gCard).join(''):`<div class="empty"><span style="cursor:pointer;text-decoration:underline" onclick="openGoalModal()">Add your first goal →</span></div>`}</div>`;
+}
+
+function gCard(g){
+  const a=ga(g.area),p=gpct(g.id);
+  const om=S.milestones.filter(m=>m.goal===g.id&&!m.done).length;
+  const tm=S.milestones.filter(m=>m.goal===g.id).length;
+  return`<div class="goal-card" style="border-left-color:${a.color}" onclick="go('area_${g.area}')">
+    <div class="gc-hdr"><div class="gc-title">${g.title}</div><div class="gc-horizon">${g.horizon}</div></div>
+    ${g.why?`<div class="gc-why">"${g.why}"</div>`:''}
+    <div class="gc-footer">
+      <span class="gc-tag" style="background:${a.soft};color:${a.color}">${a.emoji} ${a.label}</span>
+      <div class="gc-prog"><div class="gc-prog-fill" style="width:${p}%;background:${a.color}"></div></div>
+      <span class="gc-pct">${p}%</span>
+      <span class="gc-ct">${om}/${tm} ms</span>
+    </div>
+  </div>`;
+}
+
+function rMs(el,fa){
+  const ms=S.milestones.filter(m=>!fa||m.area===fa);
+  const open=ms.filter(m=>!m.done).sort((a,b)=>a.due.localeCompare(b.due));
+  const done=ms.filter(m=>m.done);
+  el.innerHTML=`<div class="sh"><div class="sh-title">Open Milestones (${open.length})</div><div class="sh-line"></div></div>
+  <div class="ms-list">${open.length?open.map(msRow).join(''):'<div class="empty">All milestones complete! 🎉</div>'}</div>
+  ${done.length?`<div class="sh" style="margin-top:18px"><div class="sh-title">Completed (${done.length})</div><div class="sh-line"></div></div><div class="ms-list">${done.map(msRow).join('')}</div>`:''}`;
+}
+
+function msRow(m){
+  const a=ga(m.area),g=gg(m.goal),dc=dcls(m.due);
+  return`<div class="ms-row ${m.done?'done':''}" id="ms-${m.id}">
+    <div class="ms-chk" onclick="togMs('${m.id}',event)"><span class="ms-ci">✓</span></div>
+    <div class="ms-body">
+      <div class="ms-name">${m.name}</div>
+      <div class="ms-meta">
+        <span class="ms-atag" style="background:${a.soft};color:${a.color}">${a.emoji}</span>
+        ${g?`<span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.title}</span>`:''}
+        ${m.due?`<span class="ms-date ${dc}">${dlbl(m.due)}</span>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function rActs(el,fa,fg){
+  const open=S.actions.filter(a=>!a.done&&(!fa||a.area===fa)&&(!fg||a.goal===fg)).sort((a,b)=>{if(!a.due&&!b.due)return 0;if(!a.due)return 1;if(!b.due)return -1;return a.due.localeCompare(b.due);});
+  const done=S.actions.filter(a=>a.done&&(!fa||a.area===fa)).slice(-6).reverse();
+  el.innerHTML=`<div class="sh"><div class="sh-title">Open Actions (${open.length})</div><div class="sh-line"></div><div class="sh-btn" onclick="openActModal()">+ Add</div></div>
+  <div class="act-list">${open.length?open.map(aRow).join(''):`<div class="empty">All clear! <span style="cursor:pointer;text-decoration:underline" onclick="openActModal()">Add an action →</span></div>`}</div>
+  ${done.length?`<div class="sh" style="margin-top:18px"><div class="sh-title">Recently Done</div><div class="sh-line"></div></div><div class="act-list">${done.map(aRow).join('')}</div>`:''}`;
+}
+
+function aRow(a){
+  const ar=ga(a.area),g=gg(a.goal),dc=dcls(a.due);
+  return`<div class="act-row ${a.done?'done':''}" id="act-${a.id}">
+    <div class="chk" onclick="togAct('${a.id}',event)"><span class="chk-i">✓</span></div>
+    <div class="a-adot" style="background:${ar.color}"></div>
+    <div class="act-name">${a.name}</div>
+    ${g?`<span class="a-gtag" title="${g.title}">${g.title}</span>`:''}
+    ${etag(a.energy)}
+    ${a.due?`<span class="a-due ${dc}">${dlbl(a.due)}</span>`:''}
+  </div>`;
+}
+
+function rArea(el,aid){
+  const a=ga(aid);
+  const goals=S.goals.filter(g=>g.area===aid);
+  const oa=S.actions.filter(x=>x.area===aid&&!x.done).length;
+  const om=S.milestones.filter(m=>m.area===aid&&!m.done).length;
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:18px">
+    <div style="font-size:32px">${a.emoji}</div>
+    <div>
+      <div style="font-family:'Lora',serif;font-size:18px;font-weight:600">${a.label}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:1px">${goals.length?goals.length+' goals':''} · ${om} milestones · ${oa} actions open</div>
+    </div>
+  </div>
+  <div id="av-g"></div><div id="av-m"></div><div id="av-a"></div>`;
+  const ge=document.getElementById('av-g');
+  if(goals.length||aid!=='admin'){
+    ge.innerHTML=`<div class="sh"><div class="sh-title">Goals</div><div class="sh-line"></div><div class="sh-btn" onclick="openGoalModal()">+ Goal</div></div>`;
+    ge.innerHTML+=`<div class="goals-list">${goals.length?goals.map(gCard).join(''):`<div class="empty"><span style="cursor:pointer;text-decoration:underline" onclick="openGoalModal()">Add a goal →</span></div>`}</div>`;
+  }
+  const ams=S.milestones.filter(m=>m.area===aid&&!m.done).sort((a,b)=>a.due.localeCompare(b.due));
+  if(ams.length){
+    const me=document.getElementById('av-m');
+    me.innerHTML=`<div class="sh" style="margin-top:18px"><div class="sh-title">Milestones</div><div class="sh-line"></div></div><div class="ms-list">${ams.map(msRow).join('')}</div>`;
+  }
+  rActs(document.getElementById('av-a'),aid,null);
+}
+
+function rReview(el){
+  const done=S.actions.filter(a=>a.done);
+  const open=S.actions.filter(a=>!a.done);
+  const ov=open.filter(a=>a.due&&dd(a.due)<0);
+  const na=S.goals.filter(g=>S.actions.filter(a=>a.goal===g.id&&!a.done).length===0);
+  const ums=S.milestones.filter(m=>!m.done&&m.due&&dd(m.due)<=14).sort((a,b)=>a.due.localeCompare(b.due));
+  el.innerHTML=`<div style="max-width:580px">
+    <div style="font-family:'Lora',serif;font-size:17px;font-weight:600;margin-bottom:3px">Weekly Review</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:20px">Honest reflection. 15 minutes.</div>
+    <div class="sh"><div class="sh-title">Wins (${done.length} completed)</div><div class="sh-line"></div></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:4px">
+      ${done.length?done.slice(-5).map(a=>`<div style="padding:4px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:var(--health)">✓</span>${a.name}</div>`).join(''):'<div style="color:var(--text3);font-size:13px">No completed actions yet.</div>'}
+    </div>
+    <div class="sh" style="margin-top:14px"><div class="sh-title">Still open ${ov.length?`— ${ov.length} overdue`:''}</div><div class="sh-line"></div></div>
+    ${ov.length?`<div style="background:#fdecea;border-radius:6px;padding:7px 11px;font-size:12px;color:#d93025;margin-bottom:7px">⚠ ${ov.length} overdue — reschedule or drop honestly</div>`:''}
+    <div class="act-list">${open.slice(0,8).map(aRow).join('')}</div>
+    ${ums.length?`<div class="sh" style="margin-top:14px"><div class="sh-title">Milestones due in 2 weeks</div><div class="sh-line"></div></div><div class="ms-list">${ums.map(msRow).join('')}</div>`:''}
+    ${na.length?`<div class="sh" style="margin-top:14px"><div class="sh-title" style="color:var(--finance)">Goals with no actions</div><div class="sh-line"></div></div>
+    ${na.map(g=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;display:flex;align-items:center;gap:9px;margin-bottom:5px">
+      <span style="color:${ga(g.area).color}">${ga(g.area).emoji}</span>
+      <span style="font-size:13px;flex:1">${g.title}</span>
+      <span style="font-size:11px;color:var(--career);cursor:pointer" onclick="openActForGoal('${g.id}')">Add action →</span>
+    </div>`).join('')}`:''}
+    <div class="sh" style="margin-top:18px"><div class="sh-title">Reflection prompts</div><div class="sh-line"></div></div>
+    ${['Is your job search moving fast enough for a June offer?','Which life area got the least attention this week?','Son leaves for Cornell in ~5 months — are you being present?','What would make next week a genuine win?'].map(q=>`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:7px">
+      <div style="font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--text2);margin-bottom:4px">${q}</div>
+      <div style="font-size:11px;color:var(--career);cursor:pointer" onclick="cosQ('${q.replace(/'/g,"\\'")}')">Ask CoS agent ↗</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+const ME=[
+  {from:'recruiter@databricks.com',subject:'Platform PM role — would love to connect',snippet:'Principal PM role on our data platform team matches your background.',time:'8:22 AM',action:'Reply to Databricks recruiter and schedule screen',area:'career',goal:'g1'},
+  {from:'coach@runningcoach.com',subject:'Your triathlon training plan is ready',snippet:'Based on your sprint tri goal, here are weeks 1–8.',time:'Yesterday',action:'Review and load triathlon training plan into calendar',area:'health',goal:'g3'},
+  {from:'advisor@fidelity.com',subject:'Q1 portfolio review — action items',snippet:'Recommend reviewing your asset allocation before Q2.',time:'Mon',action:'Review portfolio and rebalance for 2026',area:'finance',goal:'g4'},
+];
+const MC=[
+  {time:'8:00 AM',title:'Morning workout',color:'#2dbe8c',action:'Log workout and update weekly tracking sheet',area:'health',goal:'g3'},
+  {time:'11:00 AM',title:'Coffee with former Cisco colleague',color:'#5b6af5',action:'Prep 3 topics: role search + market + their advice',area:'social',goal:'g6'},
+  {time:'3:00 PM',title:'Family spring break planning',color:'#f0804a',action:'Finalize spring break week activities with family',area:'family',goal:'g5'},
+];
+function rInbox(el){
+  el.innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">CoS scanned Gmail — personal action items detected.</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+  ${ME.map((e,i)=>{const a=ga(e.area);return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <span style="font-size:12px;font-weight:500;color:${a.color}">${e.from}</span>
+      <span style="font-size:13px;font-weight:500">${e.subject}</span>
+      <span style="font-size:10px;color:var(--text3);margin-left:auto;font-family:'DM Mono',monospace">${e.time}</span>
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:7px">${e.snippet}</div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${a.soft};color:${a.color}">${a.emoji}</span>
+      <span style="font-size:12px;color:var(--text2)">✦ "${e.action}"</span>
+      <button class="btn btn-out btn-sm" style="margin-left:auto" onclick="impEmail(${i})">Capture →</button>
+    </div>
+  </div>`;}).join('')}
+  </div>`;
+}
+function impEmail(i){
+  const e=ME[i];
+  if(!S.actions.find(a=>a.name===e.action))
+    S.actions.push({id:uid('a'),name:e.action,goal:e.goal||null,area:e.area,energy:'med',due:nfn(3),time:'30 min',notes:'',done:false,source:'gmail'});
+  saveS();showCoSR(`✓ Captured: "${e.action}"`);go('actions');
+}
+function rCal(el){
+  el.innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Today's calendar — suggested actions.</div>
+  <div style="display:flex;flex-direction:column;gap:6px">
+  ${MC.map((e,i)=>{const a=ga(e.area);return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:11px 14px;display:flex;align-items:center;gap:12px">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:${e.color};min-width:50px">${e.time}</div>
+    <div style="width:3px;height:32px;border-radius:2px;background:${e.color};flex-shrink:0"></div>
+    <div style="flex:1"><div style="font-size:13px;font-weight:500">${e.title}</div><div style="font-size:11px;color:var(--text3);margin-top:1px">✦ ${e.action}</div></div>
+    <button class="btn btn-out btn-sm" onclick="impCal(${i})">Capture</button>
+  </div>`;}).join('')}
+  </div>`;
+}
+function impCal(i){
+  const e=MC[i];
+  if(!S.actions.find(a=>a.name===e.action))
+    S.actions.push({id:uid('a'),name:e.action,goal:e.goal||null,area:e.area,energy:'low',due:tod(),time:'15 min',notes:`From: ${e.title}`,done:false,source:'calendar'});
+  saveS();showCoSR(`✓ Captured: "${e.action}"`);go('actions');
+}
+
+// ─── Toggle ───────────────────────────────────────────────────────
+function togAct(id,e){e.stopPropagation();const a=S.actions.find(x=>x.id===id);if(a){a.done=!a.done;saveS();renderSB();render();renderMobile();}
+}
+function togMs(id,e){e.stopPropagation();const m=S.milestones.find(x=>x.id===id);if(m){m.done=!m.done;saveS();renderSB();render();}
+}
+
+// ─── Quick Capture ────────────────────────────────────────────────
+async function quickCapture(){
+  const input=document.getElementById('qc-input');
+  const q=input.value.trim();if(!q)return;
+  input.value='';
+  const resp=document.getElementById('qc-resp');
+  resp.textContent='Adding…';resp.classList.add('show');
+  await parseAndAddAction(q,resp);
+}
+async function mobileCapture(){
+  const input=document.getElementById('m-qc');
+  const q=input.value.trim();if(!q)return;
+  input.value='';
+  const resp=document.getElementById('m-qc-resp');
+  resp.textContent='Adding…';resp.classList.add('show');
+  await parseAndAddAction(q,resp);
+}
+
+async function parseAndAddAction(q,respEl){
+  // Simple local parse first — fast fallback
+  const dueMap={'today':0,'tomorrow':1,'monday':1,'tuesday':2,'wednesday':3,'thursday':4,'friday':5,'saturday':6,'sunday':7};
+  let due=null;
+  const byMatch=q.match(/by\s+([\w\s]+?)(?:\s*$|,)/i);
+  if(byMatch){
+    const w=byMatch[1].trim().toLowerCase();
+    if(dueMap[w]!==undefined)due=nfn(dueMap[w]);
+    else if(w.match(/april\s*15/i))due='2026-04-15';
+    else if(w.match(/friday/i))due=nfn(5);
+    else if(w.match(/end of week/i))due=nfn(5);
+  }
+  // Detect area from keywords
+  const areaKw={career:['resume','linkedin','interview','job','recruiter','application','offer'],health:['gym','workout','run','bike','swim','peloton','fitness','race','triathlon'],family:['son','daughter','family','cornell','tahoe','kauai','trip','vacation'],finance:['tax','ira','invest','budget','insurance','401k','money','financial'],growth:['course','learn','ai','claude','build','app','study'],social:['network','outreach','coffee','lunch','friend','linkedin'],admin:['doctor','dentist','vision','glasses','bocce','fantasy','property','insurance','schedule','appointment','pay','renew']};
+  let detectedArea='admin';
+  const ql=q.toLowerCase();
+  for(const[area,kws]of Object.entries(areaKw)){if(kws.some(k=>ql.includes(k))){detectedArea=area;break;}}
+  const goal=S.goals.find(g=>g.area===detectedArea)||null;
+  // Clean name
+  const name=q.replace(/by\s+[\w\s]+$/i,'').replace(/\s+by\s+april\s+15/i,'').trim();
+  S.actions.push({id:uid('a'),name:name||q,goal:goal?.id||null,area:detectedArea,energy:'med',due:due||nfn(7),time:'30 min',notes:'',done:false,source:'quick-capture'});
+  saveS();renderSB();render();renderMobile();
+  const a=ga(detectedArea);
+  respEl.textContent=`✓ Added to ${a.emoji} ${a.label}${due?' — due '+due:''}`;
+  setTimeout(()=>respEl.classList.remove('show'),4000);
+}
+
+// ─── Modals ───────────────────────────────────────────────────────
+let selA='career';
+function openGoalModal(){
+  selA='career';
+  ['g-title','g-why','g-measure'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('g-due').value='';
+  rPicker();openM('goal-modal');
+}
+function rPicker(){
+  document.getElementById('g-apicker').innerHTML=AREAS.map(a=>
+    `<div class="apbtn ${selA===a.id?'sel':''}" style="${selA===a.id?`border-color:${a.color};background:${a.soft};color:${a.color}`:''}" onclick="pickA('${a.id}')">${a.emoji} ${a.label}</div>`
+  ).join('');
+}
+function pickA(id){selA=id;rPicker();}
+function saveGoal(){
+  const t=document.getElementById('g-title').value.trim();if(!t)return;
+  S.goals.push({id:uid('g'),title:t,area:selA,why:document.getElementById('g-why').value.trim(),horizon:document.getElementById('g-horizon').value,due:document.getElementById('g-due').value,measure:document.getElementById('g-measure').value.trim()});
+  saveS();closeM('goal-modal');renderSB();render();
+}
+function openActModal(gid){
+  ['a-name','a-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('a-due').value='';
+  const gs=document.getElementById('a-goal');
+  gs.innerHTML=`<option value="">— No linked goal —</option>`+S.goals.map(g=>`<option value="${g.id}">${ga(g.area).emoji} ${g.title}</option>`).join('');
+  if(gid)gs.value=gid;
+  const as=document.getElementById('a-area-sel');
+  as.innerHTML=AREAS.map(a=>`<option value="${a.id}">${a.emoji} ${a.label}</option>`).join('');
+  openM('action-modal');
+}
+function openActForGoal(gid){openActModal(gid);}
+function saveAction(){
+  const n=document.getElementById('a-name').value.trim();if(!n)return;
+  const gid=document.getElementById('a-goal').value;
+  const g=gg(gid);
+  const areaVal=document.getElementById('a-area-sel').value;
+  S.actions.push({id:uid('a'),name:n,goal:gid||null,area:g?g.area:areaVal,energy:document.getElementById('a-energy').value,due:document.getElementById('a-due').value,time:'30 min',notes:document.getElementById('a-notes').value,done:false,source:null});
+  saveS();closeM('action-modal');renderSB();render();renderMobile();
+}
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id)?.classList.remove('open');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-bg'))closeM(e.target.id);});
+
+// ─── Mobile ───────────────────────────────────────────────────────
+function mgo(v){
+  S.mview=v;
+  document.querySelectorAll('.mobile-nav-btn').forEach(b=>b.classList.remove('active'));
+  const b=document.getElementById('mn-'+v);if(b)b.classList.add('active');
+  const titles={today:'Today\'s Focus',actions:'All Actions',goals:'Goals',admin:'🏡 Admin',cos:'CoS Agent'};
+  document.getElementById('m-title').textContent=titles[v]||'Life OS 2026';
+  renderMobile();
+}
+
+function renderMobile(){
+  const el=document.getElementById('m-main');
+  const v=S.mview;
+  if(v==='today') rMobileToday(el);
+  else if(v==='actions') rMobileActions(el,null);
+  else if(v==='goals') rMobileGoals(el);
+  else if(v==='admin') rMobileActions(el,'admin');
+  else if(v==='cos') rMobileCoS(el);
+}
+
+function rMobileToday(el){
+  const ov=S.actions.filter(a=>!a.done&&a.due&&dd(a.due)<0);
+  const dt=S.actions.filter(a=>!a.done&&a.due&&dd(a.due)===0);
+  const ds=S.actions.filter(a=>!a.done&&a.due&&dd(a.due)>0&&dd(a.due)<=3);
+  const all=[...ov,...dt,...ds];
+  el.innerHTML=`
+    ${ov.length?`<div style="font-size:11px;color:#d93025;font-weight:500;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">⚠ Overdue (${ov.length})</div>`:''}
+    ${all.length?all.map(mActRow).join(''):'<div style="color:var(--text3);font-size:14px;padding:20px 0;text-align:center">Nothing due today or overdue 🎉</div>'}
+    <div style="margin-top:16px;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Upcoming milestones</div>
+    <div style="margin-top:8px">${S.milestones.filter(m=>!m.done&&m.due&&dd(m.due)<=7&&dd(m.due)>=0).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,4).map(m=>{
+      const a=ga(m.area);
+      return`<div style="padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px;display:flex;gap:8px;align-items:center">
+        <span>${a.emoji}</span><span style="flex:1">${m.name}</span><span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">${dlbl(m.due)}</span>
+      </div>`;
+    }).join('')}</div>
+  `;
+}
+
+function rMobileActions(el,filterArea){
+  const open=S.actions.filter(a=>!a.done&&(!filterArea||a.area===filterArea)).sort((a,b)=>{if(!a.due&&!b.due)return 0;if(!a.due)return 1;if(!b.due)return -1;return a.due.localeCompare(b.due);});
+  // Area filter chips (not for admin)
+  let chips='';
+  if(!filterArea){
+    chips=`<div class="mobile-area-chips">${AREAS.map(a=>`<div class="mobile-area-chip" onclick="rMobileFilterArea('${a.id}')">${a.emoji} ${a.label}</div>`).join('')}</div>`;
+  }
+  el.innerHTML=chips+(open.length?open.map(mActRow).join(''):'<div style="color:var(--text3);font-size:14px;padding:20px 0;text-align:center">All done! 🎉</div>');
+}
+
+function rMobileFilterArea(aid){
+  const el=document.getElementById('m-main');
+  rMobileActions(el,aid);
+}
+
+function rMobileGoals(el){
+  el.innerHTML=S.goals.map(g=>{
+    const a=ga(g.area),p=gpct(g.id);
+    const oa=S.actions.filter(x=>x.goal===g.id&&!x.done).length;
+    return`<div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid ${a.color};border-radius:10px;padding:13px 14px;margin-bottom:8px">
+      <div style="font-size:14px;font-weight:500;margin-bottom:4px;line-height:1.4">${g.title}</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">${a.emoji} ${a.label} · ${oa} open actions · ${p}% done</div>
+      <div style="height:3px;background:var(--surface3);border-radius:2px;overflow:hidden"><div style="height:100%;width:${p}%;background:${a.color};border-radius:2px"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function rMobileCoS(el){
+  el.innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Ask your personal CoS agent anything.</div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
+    ${['What should I focus on today?','Am I on track for a June job offer?','What\'s overdue?','Which area needs attention?'].map(q=>`<div style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:14px;cursor:pointer;color:var(--text2)" onclick="mAsk('${q}')">${q} →</div>`).join('')}
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:8px">
+    <input style="flex:1;padding:11px 13px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;color:var(--text)" id="m-cos-in" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')mAsk()">
+    <button class="btn btn-dark" onclick="mAsk()">Ask</button>
+  </div>
+  <div class="cos-resp" id="m-cos-resp" style="font-size:13px"></div>`;
+}
+
+function mActRow(a){
+  const ar=ga(a.area),dc=dcls(a.due);
+  return`<div class="mobile-act-row ${a.done?'done':''}" id="mact-${a.id}">
+    <div class="mobile-chk" onclick="togMobileAct('${a.id}')"><span class="mobile-chk-i">✓</span></div>
+    <div class="mobile-act-body">
+      <div class="mobile-act-name">${a.name}</div>
+      <div class="mobile-act-meta">
+        <span style="color:${ar.color}">${ar.emoji} ${ar.label}</span>
+        ${a.due?`<span class="${'a-due '+dc}" style="font-family:'DM Mono',monospace">${dlbl(a.due)}</span>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function togMobileAct(id){
+  const a=S.actions.find(x=>x.id===id);
+  if(a){a.done=!a.done;saveS();renderSB();renderMobile();}
+}
+
+async function mAsk(q){
+  const input=document.getElementById('m-cos-in');
+  const query=q||input?.value?.trim();
+  if(!query)return;
+  if(input)input.value='';
+  const resp=document.getElementById('m-cos-resp');
+  if(!resp)return;
+  resp.innerHTML='<span class="pulse">thinking…</span>';
+  resp.classList.add('show');
+  // Reuse CoS logic
+  await runCoS(query,resp);
+}
+
+// ─── CoS Agent ────────────────────────────────────────────────────
+function qa(el){document.getElementById('cos-in').value=el.textContent;sendCoS();}
+function cosQ(q){document.getElementById('cos-in').value=q;sendCoS();document.querySelector('.cos-bar').scrollIntoView({behavior:'smooth'});}
+
+async function sendCoS(){
+  const input=document.getElementById('cos-in');
+  const q=input.value.trim();if(!q)return;
+  input.value='';
+  const resp=document.getElementById('cos-resp');
+  resp.innerHTML='<span class="pulse">thinking…</span>';
+  resp.classList.add('show');
+  await runCoS(q,resp);
+}
+
+async function runCoS(q,respEl){
+  const gs=S.goals.map(g=>{
+    const a=ga(g.area),p=gpct(g.id);
+    const om=S.milestones.filter(m=>m.goal===g.id&&!m.done).length;
+    const oa=S.actions.filter(x=>x.goal===g.id&&!x.done).length;
+    return`[${a.label}] ${g.title} — ${p}% done, ${om} milestones, ${oa} actions open`;
+  }).join('\n');
+  const ms=S.milestones.filter(m=>!m.done).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,10).map(m=>{
+    const d=dd(m.due);return`- ${m.name} (due:${m.due}, ${d<0?`OVERDUE ${Math.abs(d)}d`:d===0?'today':`${d}d`})`;
+  }).join('\n');
+  const as=S.actions.filter(a=>!a.done).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,12).map(a=>{
+    const d=dd(a.due);return`- [${ga(a.area).label}] ${a.name} (due:${a.due||'none'}, ${d!==null?(d<0?`OVERDUE`:d===0?'today':`${d}d`):'no date'}, energy:${a.energy})`;
+  }).join('\n');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`You are a personal Chief of Staff AI — "Relaunch Year 2026". Key context: Felix Davis, searching for Principal/Director PM at B2B tech platform (Cisco/AWS background), target offer June 30; rebuilding fitness toward sprint triathlon; son starts Cornell August 2026; reactivating dormant Cisco/AWS network; building AI expertise through hands-on projects. Also tracking household/admin items.
+
+Be direct, warm, specific. Max 100 words. Reference actual goals and timeline.
+
+If asked to add an action, respond ONLY with: ADD_ACTION:<name>|<area:career/health/family/finance/growth/social/admin>|<goal id or none>|<due days>|<energy:low/med/high>
+
+GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: ${new Date().toDateString()}. Son leaves Cornell ~5 months. Job offer target: June 30.`,
+        messages:[{role:'user',content:q}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'No response.';
+    if(text.startsWith('ADD_ACTION:')){
+      const parts=text.replace('ADD_ACTION:','').split('|');
+      const name=parts[0]?.trim(),area=parts[1]?.trim()||'admin';
+      const gid=parts[2]?.trim(),days=parseInt(parts[3]?.trim())||7,energy=parts[4]?.trim()||'med';
+      if(name){
+        S.actions.push({id:uid('a'),name,goal:S.goals.find(g=>g.id===gid)?gid:null,area,energy,due:nfn(days),time:'30 min',notes:'Added by CoS agent',done:false,source:'cos'});
+        saveS();renderSB();render();renderMobile();
+        respEl.innerHTML=`✦ Added to ${ga(area).emoji} ${ga(area).label}: "<strong>${name}</strong>"`;
+      }
+    } else {
+      respEl.innerHTML='✦ '+text.replace(/\n/g,'<br>');
+    }
+  }catch(err){
+    respEl.innerHTML='✦ Agent offline. Try: "What\'s overdue?" or type to add an action.';
+  }
+}
+
+// ─── Export / Import ──────────────────────────────────────────────
+function exportData(){
+  const data=JSON.stringify(S,null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`lifeOS-backup-${tod()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showCoSR('✓ Data exported — save the file somewhere safe (iCloud, Google Drive, or paste into your CoS Project).');
+}
+
+function importData(){
+  const input=document.createElement('input');
+  input.type='file';
+  input.accept='.json';
+  input.onchange=e=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const parsed=JSON.parse(ev.target.result);
+        if(!parsed.goals||!parsed.actions||!parsed.milestones){
+          showCoSR('⚠ Invalid file — does not look like a Life OS backup.');
+          return;
+        }
+        if(confirm(`Import data from ${file.name}? This will replace your current data.`)){
+          S={...mkState(),...parsed};
+          saveS();renderSB();render();renderMobile();
+          showCoSR('✓ Data imported successfully.');
+        }
+      }catch(err){
+        showCoSR('⚠ Could not read file — make sure it\'s a valid Life OS JSON export.');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function showCoSR(msg){
+  const r=document.getElementById('cos-resp');
+  if(r){r.innerHTML=msg;r.classList.add('show');setTimeout(()=>r.classList.remove('show'),5000);}
+}
+
+// ─── PIN Lock ─────────────────────────────────────────────────────
+const PIN_KEY='los26b_pin';
+const PIN_UNLOCKED='los26b_unlocked';
+let pinBuffer='';
+let pinSettingMode=false; // true = setting new PIN, false = verifying
+let pinFirstEntry=''; // stores first entry during PIN setup confirmation
+
+function initPin(){
+  const unlocked=localStorage.getItem(PIN_UNLOCKED);
+  const hasPin=localStorage.getItem(PIN_KEY);
+  if(unlocked==='1'){
+    // Already unlocked on this device
+    document.getElementById('pin-screen').classList.add('hide');
+    return;
+  }
+  if(!hasPin){
+    // First time — set a PIN
+    pinSettingMode=true;
+    pinFirstEntry='';
+    document.getElementById('pin-set-mode').style.display='block';
+  }
+  // Show PIN screen
+  document.getElementById('pin-screen').classList.remove('hide');
+}
+
+function pinKey(k){
+  if(!k)return;
+  if(pinBuffer.length>=4)return;
+  pinBuffer+=k;
+  updatePinDots();
+  if(pinBuffer.length===4){
+    setTimeout(()=>pinSubmit(),120);
+  }
+}
+
+function pinDel(){
+  if(pinBuffer.length>0){
+    pinBuffer=pinBuffer.slice(0,-1);
+    updatePinDots();
+    document.getElementById('pin-err').textContent='';
+    document.querySelectorAll('.pin-dot').forEach(d=>d.classList.remove('err'));
+  }
+}
+
+function updatePinDots(err){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('pd'+i);
+    d.classList.toggle('filled',i<pinBuffer.length);
+    if(err)d.classList.add('err'); else d.classList.remove('err');
+  }
+}
+
+function pinSubmit(){
+  const hasPin=localStorage.getItem(PIN_KEY);
+  if(pinSettingMode){
+    if(!pinFirstEntry){
+      // First entry — store and ask to confirm
+      pinFirstEntry=pinBuffer;
+      pinBuffer='';
+      updatePinDots();
+      document.getElementById('pin-set-mode').innerHTML=
+        'Confirm your PIN<br><span style="font-size:11px;color:var(--text3)">Enter the same PIN again</span>';
+      return;
+    } else {
+      // Confirmation entry
+      if(pinBuffer===pinFirstEntry){
+        localStorage.setItem(PIN_KEY,pinBuffer);
+        localStorage.setItem(PIN_UNLOCKED,'1');
+        document.getElementById('pin-screen').classList.add('hide');
+        return;
+      } else {
+        // Mismatch — start over
+        document.getElementById('pin-err').textContent="PINs didn't match — try again";
+        updatePinDots(true);
+        pinFirstEntry='';
+        pinBuffer='';
+        setTimeout(()=>{
+          updatePinDots();
+          document.getElementById('pin-err').textContent='';
+          document.getElementById('pin-set-mode').innerHTML=
+            'First time setup — enter a 4-digit PIN<br><span style="font-size:11px;color:var(--text3)">You'll only need this once on each device</span>';
+        },900);
+        return;
+      }
+    }
+  } else {
+    // Verify mode
+    if(pinBuffer===hasPin){
+      localStorage.setItem(PIN_UNLOCKED,'1');
+      document.getElementById('pin-screen').classList.add('hide');
+    } else {
+      document.getElementById('pin-err').textContent='Incorrect PIN';
+      updatePinDots(true);
+      pinBuffer='';
+      setTimeout(()=>{
+        updatePinDots();
+        document.getElementById('pin-err').textContent='';
+      },900);
+    }
+  }
+}
+
+// Allow keyboard input on desktop
+document.addEventListener('keydown',e=>{
+  const ps=document.getElementById('pin-screen');
+  if(ps.classList.contains('hide'))return;
+  if(e.key>='0'&&e.key<='9')pinKey(e.key);
+  if(e.key==='Backspace')pinDel();
+});
+
+// Add "Lock" option to settings — lets user lock and re-enter PIN
+function lockApp(){
+  localStorage.removeItem(PIN_UNLOCKED);
+  pinBuffer='';
+  pinSettingMode=false;
+  updatePinDots();
+  document.getElementById('pin-err').textContent='';
+  document.getElementById('pin-screen').classList.remove('hide');
+}
+
+// ─── Init ─────────────────────────────────────────────────────────
+const now=new Date();
+const DN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('view-date').textContent=`${DN[now.getDay()]}, ${MN[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+// Render immediately from localStorage, then refresh after Sheets loads
+initPin();
+renderSB();render();renderMobile();
+loadS().then(()=>{renderSB();render();renderMobile();});
+</script>
+</body>
+</html>
