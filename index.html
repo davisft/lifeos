@@ -286,6 +286,7 @@ select.fi-input{cursor:pointer;}
   <div class="nav-item active" id="nav-dashboard" onclick="go('dashboard')"><span>◉</span>Dashboard</div>
   <div class="nav-item" id="nav-goals" onclick="go('goals')"><span>◎</span>Goals<span class="nav-badge" id="bg-goals">0</span></div>
   <div class="nav-item" id="nav-milestones" onclick="go('milestones')"><span>◈</span>Milestones<span class="nav-badge" id="bg-ms">0</span></div>
+  <div class="nav-item" id="nav-quarterly" onclick="go('quarterly')"><span>◑</span>Quarterly Plan</div>
   <div class="nav-item" id="nav-actions" onclick="go('actions')"><span>◻</span>Actions<span class="nav-badge" id="bg-acts">0</span></div>
   <div class="nav-item" id="nav-review" onclick="go('review')"><span>◷</span>Weekly Review</div>
   <div class="nav-sec" style="margin-top:10px">Life Areas</div>
@@ -435,6 +436,44 @@ select.fi-input{cursor:pointer;}
     </div>
     <div class="fi"><div class="fi-label">How will you measure success?</div><input class="fi-input" id="g-measure" placeholder="Specific, observable outcome"></div>
     <div class="mf"><button class="btn btn-out" onclick="closeM('goal-modal')">Cancel</button><button class="btn btn-dark" onclick="saveGoal()">Save Goal</button></div>
+  </div>
+</div>
+
+<!-- Edit Goal Modal -->
+<div class="modal-bg" id="edit-goal-modal">
+  <div class="modal">
+    <div class="modal-title">Edit Goal</div>
+    <div class="fi"><div class="fi-label">What do you want to achieve?</div><input class="fi-input" id="eg-title" placeholder="e.g. Land a Director PM role"></div>
+    <div class="fi"><div class="fi-label">Life area</div><div class="apicker" id="eg-apicker"></div></div>
+    <div class="fi"><div class="fi-label">Why does this matter?</div><textarea class="fi-input" id="eg-why" placeholder="Your honest reason"></textarea></div>
+    <div class="fi-row">
+      <div class="fi"><div class="fi-label">Horizon</div><select class="fi-input" id="eg-horizon"><option>1 month</option><option>3 months</option><option>6 months</option><option>1 year</option><option>Ongoing</option></select></div>
+      <div class="fi"><div class="fi-label">Target date</div><input class="fi-input" type="date" id="eg-due"></div>
+    </div>
+    <div class="fi"><div class="fi-label">How will you measure success?</div><input class="fi-input" id="eg-measure" placeholder="Specific, observable outcome"></div>
+    <div class="mf">
+      <button class="btn btn-out" style="color:#d93025;border-color:#d93025;margin-right:auto" onclick="deleteGoal()">Delete</button>
+      <button class="btn btn-out" onclick="closeM('edit-goal-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="saveEditGoal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Milestone Modal -->
+<div class="modal-bg" id="edit-ms-modal">
+  <div class="modal">
+    <div class="modal-title" id="edit-ms-title">Edit Milestone</div>
+    <div class="fi"><div class="fi-label">Milestone name</div><input class="fi-input" id="em-name" placeholder="What needs to be true?"></div>
+    <div class="fi-row">
+      <div class="fi"><div class="fi-label">Due date</div><input class="fi-input" type="date" id="em-due"></div>
+      <div class="fi"><div class="fi-label">Life area</div><select class="fi-input" id="em-area"></select></div>
+    </div>
+    <div class="fi"><div class="fi-label">Linked goal</div><select class="fi-input" id="em-goal"></select></div>
+    <div class="mf">
+      <button class="btn btn-out" style="color:#d93025;border-color:#d93025;margin-right:auto" id="em-delete-btn" onclick="deleteMilestone()">Delete</button>
+      <button class="btn btn-out" onclick="closeM('edit-ms-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="saveEditMs()">Save</button>
+    </div>
   </div>
 </div>
 
@@ -817,7 +856,7 @@ function renderSB(){
 // ─── Desktop views ────────────────────────────────────────────────
 function go(v){
   S.view=v;
-  const titles={dashboard:'Dashboard',goals:'Goals',milestones:'Milestones',actions:'Action Items',review:'Weekly Review',inbox:'Gmail Inbox',calendar:'Calendar'};
+  const titles={dashboard:'Dashboard',goals:'Goals',milestones:'Milestones',actions:'Action Items',review:'Weekly Review',quarterly:'Quarterly Plan',inbox:'Gmail Inbox',calendar:'Calendar'};
   const aid=v.startsWith('area_')?v.replace('area_',''):null;
   document.getElementById('view-title').textContent=aid?`${ga(aid).emoji} ${ga(aid).label}`:(titles[v]||'');
   renderSB();render();
@@ -830,6 +869,7 @@ function render(){
   else if(v==='milestones')rMs(el,null);
   else if(v==='actions')rActs(el,null,null);
   else if(v==='review')rReview(el);
+  else if(v==='quarterly')rQuarterly(el);
   else if(v==='inbox')rInbox(el);
   else if(v==='calendar')rCal(el);
   else if(v.startsWith('area_'))rArea(el,v.replace('area_',''));
@@ -880,14 +920,21 @@ function gCard(g){
   const a=ga(g.area),p=gpct(g.id);
   const om=S.milestones.filter(m=>m.goal===g.id&&!m.done).length;
   const tm=S.milestones.filter(m=>m.goal===g.id).length;
-  return`<div class="goal-card" style="border-left-color:${a.color}" onclick="go('area_${g.area}')">
-    <div class="gc-hdr"><div class="gc-title">${g.title}</div><div class="gc-horizon">${g.horizon}</div></div>
-    ${g.why?`<div class="gc-why">"${g.why}"</div>`:''}
+  return`<div class="goal-card" style="border-left-color:${a.color}">
+    <div class="gc-hdr" style="cursor:pointer" onclick="openEditGoal('${g.id}')">
+      <div class="gc-title">${g.title}</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="gc-horizon">${g.horizon}</div>
+        <span style="font-size:11px;color:var(--text3);padding:2px 6px;border:1px solid var(--border);border-radius:4px;cursor:pointer" onclick="openEditGoal('${g.id}');event.stopPropagation()">✎</span>
+      </div>
+    </div>
+    ${g.why?`<div class="gc-why" style="cursor:pointer" onclick="openEditGoal('${g.id}')">"${g.why}"</div>`:''}
     <div class="gc-footer">
-      <span class="gc-tag" style="background:${a.soft};color:${a.color}">${a.emoji} ${a.label}</span>
+      <span class="gc-tag" style="background:${a.soft};color:${a.color};cursor:pointer" onclick="go('area_${g.area}')">${a.emoji} ${a.label}</span>
       <div class="gc-prog"><div class="gc-prog-fill" style="width:${p}%;background:${a.color}"></div></div>
       <span class="gc-pct">${p}%</span>
       <span class="gc-ct">${om}/${tm} ms</span>
+      <span style="font-size:11px;color:var(--career);cursor:pointer;padding:2px 7px;border:1px solid var(--career);border-radius:4px;white-space:nowrap" onclick="openAddMs('${g.id}')">+ Milestone</span>
     </div>
   </div>`;
 }
@@ -905,7 +952,7 @@ function msRow(m){
   const a=ga(m.area),g=gg(m.goal),dc=dcls(m.due);
   return`<div class="ms-row ${m.done?'done':''}" id="ms-${m.id}">
     <div class="ms-chk" onclick="togMs('${m.id}',event)"><span class="ms-ci">✓</span></div>
-    <div class="ms-body">
+    <div class="ms-body" style="cursor:pointer" onclick="openEditMs('${m.id}')">
       <div class="ms-name">${m.name}</div>
       <div class="ms-meta">
         <span class="ms-atag" style="background:${a.soft};color:${a.color}">${a.emoji}</span>
@@ -913,6 +960,7 @@ function msRow(m){
         ${m.due?`<span class="ms-date ${dc}">${dlbl(m.due)}</span>`:''}
       </div>
     </div>
+    <span class="act-edit-btn" style="align-self:center">✎</span>
   </div>`;
 }
 
@@ -1308,6 +1356,175 @@ GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: $
   }catch(err){
     respEl.innerHTML='✦ Agent offline. Try: "What\'s overdue?" or type to add an action.';
   }
+}
+
+// ─── Edit / Delete Goal ──────────────────────────────────────────
+let editingGoalId=null;
+let selAEdit='career';
+
+function openEditGoal(id){
+  const g=S.goals.find(x=>x.id===id);
+  if(!g)return;
+  editingGoalId=id;
+  selAEdit=g.area;
+  document.getElementById('eg-title').value=g.title||'';
+  document.getElementById('eg-why').value=g.why||'';
+  document.getElementById('eg-measure').value=g.measure||'';
+  document.getElementById('eg-due').value=g.due||'';
+  document.getElementById('eg-horizon').value=g.horizon||'6 months';
+  rPickerEdit();
+  openM('edit-goal-modal');
+}
+
+function rPickerEdit(){
+  document.getElementById('eg-apicker').innerHTML=AREAS.map(a=>
+    `<div class="apbtn ${selAEdit===a.id?'sel':''}" style="${selAEdit===a.id?`border-color:${a.color};background:${a.soft};color:${a.color}`:''}" onclick="pickAEdit('${a.id}')">${a.emoji} ${a.label}</div>`
+  ).join('');
+}
+function pickAEdit(id){selAEdit=id;rPickerEdit();}
+
+function saveEditGoal(){
+  const t=document.getElementById('eg-title').value.trim();
+  if(!t)return;
+  const g=S.goals.find(x=>x.id===editingGoalId);
+  if(!g)return;
+  g.title=t;
+  g.area=selAEdit;
+  g.why=document.getElementById('eg-why').value.trim();
+  g.horizon=document.getElementById('eg-horizon').value;
+  g.due=document.getElementById('eg-due').value;
+  g.measure=document.getElementById('eg-measure').value.trim();
+  saveS();closeM('edit-goal-modal');renderSB();render();
+}
+
+function deleteGoal(){
+  const g=S.goals.find(x=>x.id===editingGoalId);
+  if(!g)return;
+  if(!confirm(`Delete goal "${g.title}"? This will not delete linked milestones or actions.`))return;
+  S.goals=S.goals.filter(x=>x.id!==editingGoalId);
+  saveS();closeM('edit-goal-modal');renderSB();render();
+}
+
+// ─── Edit / Delete / Add Milestone ───────────────────────────────
+let editingMsId=null;
+
+function openAddMs(goalId){
+  editingMsId=null;
+  document.getElementById('edit-ms-title').textContent='Add Milestone';
+  document.getElementById('em-name').value='';
+  document.getElementById('em-due').value='';
+  document.getElementById('em-delete-btn').style.display='none';
+  populateMsSelects(goalId,null);
+  openM('edit-ms-modal');
+}
+
+function openEditMs(id){
+  const m=S.milestones.find(x=>x.id===id);
+  if(!m)return;
+  editingMsId=id;
+  document.getElementById('edit-ms-title').textContent='Edit Milestone';
+  document.getElementById('em-name').value=m.name||'';
+  document.getElementById('em-due').value=m.due||'';
+  document.getElementById('em-delete-btn').style.display='';
+  populateMsSelects(m.goal,m.area);
+  openM('edit-ms-modal');
+}
+
+function populateMsSelects(goalId,area){
+  const gs=document.getElementById('em-goal');
+  gs.innerHTML=`<option value="">— No linked goal —</option>`+
+    S.goals.map(g=>`<option value="${g.id}"${goalId===g.id?' selected':''}>${ga(g.area).emoji} ${g.title}</option>`).join('');
+  const as=document.getElementById('em-area');
+  // Auto-set area from goal if available
+  const linkedGoal=S.goals.find(g=>g.id===goalId);
+  const defaultArea=area||(linkedGoal?linkedGoal.area:'career');
+  as.innerHTML=AREAS.map(a=>`<option value="${a.id}"${defaultArea===a.id?' selected':''}>${a.emoji} ${a.label}</option>`).join('');
+}
+
+function saveEditMs(){
+  const n=document.getElementById('em-name').value.trim();
+  if(!n)return;
+  const goalId=document.getElementById('em-goal').value;
+  const area=document.getElementById('em-area').value;
+  const due=document.getElementById('em-due').value;
+  if(editingMsId){
+    const m=S.milestones.find(x=>x.id===editingMsId);
+    if(!m)return;
+    m.name=n;m.goal=goalId||null;m.area=area;m.due=due;
+  } else {
+    S.milestones.push({id:uid('m'),name:n,goal:goalId||null,area,due,done:false});
+  }
+  saveS();closeM('edit-ms-modal');renderSB();render();
+}
+
+function deleteMilestone(){
+  const m=S.milestones.find(x=>x.id===editingMsId);
+  if(!m)return;
+  if(!confirm(`Delete milestone "${m.name}"?`))return;
+  S.milestones=S.milestones.filter(x=>x.id!==editingMsId);
+  saveS();closeM('edit-ms-modal');renderSB();render();
+}
+
+// ─── Quarterly Plan View ──────────────────────────────────────────
+function rQuarterly(el){
+  const quarters=[
+    {id:'q1',label:'Q1 — Jan to Mar',start:'2026-01-01',end:'2026-03-31',color:'var(--growth)'},
+    {id:'q2',label:'Q2 — Apr to Jun',start:'2026-04-01',end:'2026-06-30',color:'var(--career)'},
+    {id:'q3',label:'Q3 — Jul to Sep',start:'2026-07-01',end:'2026-09-30',color:'var(--health)'},
+    {id:'q4',label:'Q4 — Oct to Dec',start:'2026-10-01',end:'2026-12-31',color:'var(--family)'},
+  ];
+  const today=new Date().toISOString().split('T')[0];
+  let html='';
+  quarters.forEach(q=>{
+    const ms=S.milestones.filter(m=>m.due&&m.due>=q.start&&m.due<=q.end)
+      .sort((a,b)=>a.due.localeCompare(b.due));
+    const done=ms.filter(m=>m.done).length;
+    const total=ms.length;
+    const pct=total?Math.round(done/total*100):0;
+    const isCurrent=today>=q.start&&today<=q.end;
+    html+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden${isCurrent?';border-color:var(--career)':''}">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:${isCurrent?'rgba(91,106,245,0.04)':'var(--surface)'}">
+        <div style="font-family:'Lora',serif;font-weight:600;font-size:14px;flex:1">${q.label}${isCurrent?' <span style="font-size:10px;color:var(--career);font-family:'DM Mono',monospace;font-weight:400">← current</span>':''}</div>
+        <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${done}/${total} done</div>
+        <div style="width:80px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${q.color};border-radius:2px"></div>
+        </div>
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);min-width:28px">${pct}%</div>
+        <span style="font-size:11px;color:var(--career);cursor:pointer;padding:2px 8px;border:1px solid var(--career);border-radius:4px" onclick="openAddMsForQ('${q.start}','${q.end}')">+ Add</span>
+      </div>`;
+    if(ms.length===0){
+      html+=`<div style="padding:12px 16px;font-size:13px;color:var(--text3)">No milestones this quarter.</div>`;
+    } else {
+      // Group by area
+      const byArea={};
+      ms.forEach(m=>{if(!byArea[m.area])byArea[m.area]=[];byArea[m.area].push(m);});
+      html+=`<div style="padding:8px 16px 12px">`;
+      Object.entries(byArea).forEach(([aid,msList])=>{
+        const a=ga(aid);
+        html+=`<div style="margin-top:8px">
+          <div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:${a.color};margin-bottom:4px">${a.emoji} ${a.label}</div>
+          <div class="ms-list">${msList.map(msRow).join('')}</div>
+        </div>`;
+      });
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+  });
+  el.innerHTML=`
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px">All milestones grouped by quarter across every life area. Click any milestone to edit.</div>
+    ${html}`;
+}
+
+function openAddMsForQ(start,end){
+  // Pre-set due date to middle of quarter
+  const mid=new Date((new Date(start).getTime()+new Date(end).getTime())/2);
+  editingMsId=null;
+  document.getElementById('edit-ms-title').textContent='Add Milestone';
+  document.getElementById('em-name').value='';
+  document.getElementById('em-due').value=mid.toISOString().split('T')[0];
+  document.getElementById('em-delete-btn').style.display='none';
+  populateMsSelects(null,null);
+  openM('edit-ms-modal');
 }
 
 // ─── Edit / Delete Action ────────────────────────────────────────
