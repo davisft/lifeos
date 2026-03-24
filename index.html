@@ -1452,9 +1452,17 @@ const DN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'
 const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
 document.getElementById('view-date').textContent=`${DN[now.getDay()]}, ${MN[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
 // Render immediately from localStorage, then refresh after Sheets loads
-initPin();
-renderSB();render();renderMobile();
-loadS().then(()=>{renderSB();render();renderMobile();});
+// Ensure DOM is fully ready before init
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',startup);
+} else {
+  startup();
+}
+function startup(){
+  initPin();
+  renderSB();render();renderMobile();
+  loadS().then(()=>{renderSB();render();renderMobile();});
+}
 </script>
 </body>
 </html>
