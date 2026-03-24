@@ -347,6 +347,7 @@ select.fi-input{cursor:pointer;}
 <div class="mobile-view">
   <div class="mobile-header">
     <div class="mobile-title" id="m-title">Life OS 2026</div>
+    <span id="m-sync-label" onclick="manualSync()" style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);cursor:pointer;white-space:nowrap"></span>
     <button class="btn btn-dark btn-sm" onclick="openActModal()">+ Add</button>
   </div>
   <div class="mobile-qc">
@@ -610,10 +611,11 @@ function isConfigured(){return!!(JB_BIN&&JB_KEY);}
 function setSyncStatus(state,msg){
   const dot=document.getElementById('sync-dot');
   const label=document.getElementById('sync-label');
-  if(!dot||!label)return;
+  const mlabel=document.getElementById('m-sync-label');
   const colors={ok:'#2dbe8c',err:'#d93025',syncing:'#e6b830',off:'#a8a39b'};
-  dot.style.background=colors[state]||colors.off;
-  label.textContent=msg;
+  if(dot) dot.style.background=colors[state]||colors.off;
+  if(label) label.textContent=msg;
+  if(mlabel){mlabel.textContent=msg;mlabel.style.color=colors[state]||colors.off;}
 }
 
 async function loadS(){
@@ -625,21 +627,25 @@ async function loadS(){
   if(!isConfigured()){setSyncStatus('off','not connected');return;}
   setSyncStatus('syncing','loading…');
   try{
-    const res=await fetch(jbUrl(),{method:'GET',headers:jbHeaders()});
+    const url=jbUrl()+'?t='+Date.now();
+    console.log('[LifeOS] Fetching:',url);
+    const res=await fetch(url,{method:'GET',headers:{...jbHeaders(),'Cache-Control':'no-cache','Pragma':'no-cache'}});
+    console.log('[LifeOS] Response status:',res.status);
     if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();
+    console.log('[LifeOS] Got record, actions count:',data?.record?.actions?.length);
     const remote=data.record;
     if(remote&&remote.goals&&remote.actions){
       S={...mkState(),...remote};
       localStorage.setItem(LS_KEY,JSON.stringify(remote));
-      setSyncStatus('ok','synced ✓');
+      setSyncStatus('ok','synced ✓ ('+remote.actions.length+' actions)');
     } else {
-      // Bin is empty — push local state up
+      console.log('[LifeOS] Empty bin — pushing local state');
       await pushToJB();
     }
   }catch(err){
-    setSyncStatus('err','load failed');
-    console.error('JSONBin load error:',err);
+    setSyncStatus('err','load failed: '+err.message);
+    console.error('[LifeOS] JSONBin load error:',err);
   }
 }
 
