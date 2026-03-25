@@ -980,16 +980,13 @@ function rBriefing(el){
   const today = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const todayKey = 'briefing_' + new Date().toISOString().slice(0,10);
   let checked = JSON.parse(localStorage.getItem(todayKey)||'[]');
-
   const pct = checked.length / BRIEFING_CHECKS.length;
   const fillW = Math.round(pct * 100);
   const allDone = checked.length === BRIEFING_CHECKS.length;
-
   const cosUrl = 'https://claude.ai/project/019d1bb7-5192-7296-922f-fadab9ad0e2c';
 
   el.innerHTML = `
   <div style="max-width:620px">
-
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <div>
@@ -1003,9 +1000,8 @@ function rBriefing(el){
           </div>
         </div>
       </div>
-
-      <div style="display:flex;flex-direction:column;gap:6px" id="briefing-checks">
-        ${BRIEFING_CHECKS.map((c,i) => {
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${BRIEFING_CHECKS.map((c) => {
           const done = checked.includes(c.id);
           return `<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:${done?'var(--surface2)':'var(--bg)'};border:1px solid ${done?'var(--border)':'var(--border2)'};border-radius:var(--radius-sm);cursor:pointer;transition:all .15s" onclick="toggleBriefing('${c.id}','${todayKey}')">
             <div style="width:18px;height:18px;border-radius:50%;border:2px solid ${done?'var(--health)':'var(--border2)'};background:${done?'var(--health)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">
@@ -1032,7 +1028,6 @@ function rBriefing(el){
       <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-family:'DM Mono',monospace;margin-bottom:12px">Briefing History</div>
       ${getBriefingHistory()}
     </div>
-
   </div>`;
 }
 
@@ -1786,10 +1781,10 @@ function rFitness(el){
   <div class="sh" style="margin-top:4px"><div class="sh-title">Body Log History</div><div class="sh-line"></div><button class="sh-btn" onclick="openBodyLogModal()">+ Log Entry</button></div>
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px">
     <table class="comp-log" style="width:100%">
-      <thead><tr><th>Date</th><th>Weight</th><th>Body Fat %</th><th>Muscle</th><th>Waist</th><th>Note</th></tr></thead>
+      <thead><tr><th>Date</th><th>Weight</th><th>BMI</th><th>Body Fat %</th><th>Muscle</th><th>Waist</th><th>Note</th></tr></thead>
       <tbody>
         ${[...fit.bodyLog].reverse().map(e=>`
-        <tr><td>${e.date}</td><td>${e.weight} lbs</td><td>${e.bf}%</td><td>${e.muscle||'—'} lbs</td><td>${e.waist}"</td>
+        <tr><td>${e.date}</td><td>${e.weight} lbs</td><td>${e.bmi||'—'}</td><td>${e.bf}%</td><td>${e.muscle||'—'} lbs</td><td>${e.waist}\"</td>
         <td style="font-family:'DM Sans',sans-serif;color:var(--text2)">${e.note||'—'}</td></tr>`).join('')}
       </tbody>
     </table>
@@ -1860,7 +1855,7 @@ function rFitness(el){
 function openBodyLogModal(){
   document.getElementById('bl-modal').classList.add('open');
   document.getElementById('bl-date').value=new Date().toISOString().split('T')[0];
-  ['bl-weight','bl-bf','bl-muscle','bl-waist','bl-note'].forEach(id=>document.getElementById(id).value='');
+  ['bl-weight','bl-bf','bl-bmi','bl-muscle','bl-waist','bl-note'].forEach(id=>document.getElementById(id).value='');
 }
 function saveBodyLog(){
   const fit=getFitState();
@@ -1868,6 +1863,7 @@ function saveBodyLog(){
     date:document.getElementById('bl-date').value,
     weight:parseFloat(document.getElementById('bl-weight').value)||0,
     bf:parseFloat(document.getElementById('bl-bf').value)||0,
+    bmi:parseFloat(document.getElementById('bl-bmi').value)||null,
     muscle:parseFloat(document.getElementById('bl-muscle').value)||null,
     waist:parseFloat(document.getElementById('bl-waist').value)||0,
     note:document.getElementById('bl-note').value.trim(),
@@ -2118,8 +2114,12 @@ function startup(){
       <div class="fi"><div class="fi-label">Body Fat %</div><input class="fi-input" type="number" id="bl-bf" placeholder="e.g. 25.8" step="0.1"></div>
     </div>
     <div class="fi-row">
+      <div class="fi"><div class="fi-label">BMI</div><input class="fi-input" type="number" id="bl-bmi" placeholder="e.g. 24.5" step="0.1"></div>
       <div class="fi"><div class="fi-label">Muscle Mass (lbs)</div><input class="fi-input" type="number" id="bl-muscle" placeholder="e.g. 140.5" step="0.1"></div>
+    </div>
+    <div class="fi-row">
       <div class="fi"><div class="fi-label">Waist (inches) — every 2 weeks</div><input class="fi-input" type="number" id="bl-waist" placeholder="e.g. 38.5" step="0.25"></div>
+      <div class="fi"></div>
     </div>
     <div class="fi"><div class="fi-label">Note (optional)</div><input class="fi-input" id="bl-note" placeholder="e.g. 30-day check-in, post-race, etc."></div>
     <div style="background:rgba(45,190,140,0.07);border-radius:var(--radius-sm);padding:9px 12px;font-size:11px;color:var(--text2);margin-bottom:12px">
