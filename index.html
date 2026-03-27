@@ -1974,15 +1974,25 @@ function rFitness(el){
   <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px">
     ${[...wkWorkouts].sort((a,b)=>b.date.localeCompare(a.date)).map(w=>{
       const t=WORKOUT_TYPES.find(x=>x.id===w.type)||WORKOUT_TYPES[WORKOUT_TYPES.length-1];
-      return`<div style="display:flex;align-items:center;gap:9px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)">
-        <span style="font-size:16px">${t.emoji}</span>
-        <div style="flex:1">
+      const stats=[];
+      if(w.duration) stats.push(w.duration+'m');
+      if(w.distance) stats.push(w.distance+' mi');
+      if(w.pace) stats.push(w.pace+'/mi');
+      if(w.calories) stats.push(w.calories+' kcal');
+      return`<div style="display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)">
+        <span style="font-size:18px">${t.emoji}</span>
+        <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:500;color:${t.color}">${t.label}</div>
-          <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">${w.date}${w.duration?' · '+w.duration+' min':''}</div>
+          <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px">
+            ${w.date}${stats.length?' · '+stats.join(' · '):''}
+          </div>
+          ${w.notes?`<div style="font-size:11px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${w.notes}</div>`:''}
         </div>
-        ${w.notes?`<div style="font-size:11px;color:var(--text2);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w.notes}</div>`:''}
-        <div style="font-size:10px;padding:2px 7px;border-radius:10px;background:${t.source==='peloton'?'rgba(91,106,245,0.1)':t.source==='apple'?'rgba(45,190,140,0.1)':'var(--surface2)'};color:${t.source==='peloton'?'var(--career)':t.source==='apple'?'var(--health)':'var(--text3)'};font-family:'DM Mono',monospace">${t.source}</div>
-        <span onclick="deleteWorkout('${w.id}')" style="font-size:11px;color:var(--text3);cursor:pointer;padding:2px 5px;border-radius:3px" onmouseover="this.style.color='#d93025'" onmouseout="this.style.color=''">✕</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <div style="font-size:10px;padding:2px 7px;border-radius:10px;background:${t.source==='peloton'?'rgba(91,106,245,0.1)':t.source==='apple'?'rgba(45,190,140,0.1)':'var(--surface2)'};color:${t.source==='peloton'?'var(--career)':t.source==='apple'?'var(--health)':'var(--text3)'};font-family:'DM Mono',monospace">${t.source}</div>
+          <span onclick="openWorkoutLogModal('${w.id}')" style="font-size:11px;color:var(--text3);cursor:pointer;padding:2px 5px;border-radius:3px" title="Edit" onmouseover="this.style.color='var(--career)'" onmouseout="this.style.color=''">✎</span>
+          <span onclick="deleteWorkout('${w.id}')" style="font-size:11px;color:var(--text3);cursor:pointer;padding:2px 5px;border-radius:3px" title="Delete" onmouseover="this.style.color='#d93025'" onmouseout="this.style.color=''">✕</span>
+        </div>
       </div>`;
     }).join('')}
   </div>`:`
@@ -2007,7 +2017,9 @@ function rFitness(el){
         <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Week of ${wk} — ${ws.length} workout${ws.length!==1?'s':''}</div>
         <div style="display:flex;flex-wrap:wrap;gap:5px">
           ${ws.map(w=>{const t=WORKOUT_TYPES.find(x=>x.id===w.type)||WORKOUT_TYPES[WORKOUT_TYPES.length-1];
-          return`<div style="display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;background:${t.color}15;font-size:11px;color:${t.color}">${t.emoji} ${t.label}${w.duration?' ('+w.duration+'m)':''}</div>`;}).join('')}
+          const s=[];if(w.duration)s.push(w.duration+'m');if(w.distance)s.push(w.distance+'mi');if(w.calories)s.push(w.calories+'kcal');
+          return`<div onclick="openWorkoutLogModal('${w.id}')" style="display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;background:${t.color}15;font-size:11px;color:${t.color};cursor:pointer">${t.emoji} ${t.label}${s.length?' · '+s.join(' · '):''}
+          </div>`;}).join('')}
         </div>
       </div>`).join('')}
     </div>`;
@@ -2171,7 +2183,7 @@ function rFitness(el){
 // ─── Workout Log functions ────────────────────────────────────────
 function quickLogWorkout(typeId){
   const fit=getFitState();
-  fit.workoutActual.push({id:uid('w'),date:new Date().toISOString().split('T')[0],type:typeId,duration:null,notes:''});
+  fit.workoutActual.push({id:uid('w'),date:new Date().toISOString().split('T')[0],type:typeId,duration:null,calories:null,distance:null,pace:'',notes:''});
   saveS();render();
 }
 function deleteWorkout(wid){
@@ -2179,23 +2191,45 @@ function deleteWorkout(wid){
   fit.workoutActual=fit.workoutActual.filter(w=>w.id!==wid);
   saveS();render();
 }
-function openWorkoutLogModal(){
+function wlTypeChange(){
+  const typeId=document.getElementById('wl-type').value;
+  const isRun=['outdoor-run','peloton-run'].includes(typeId);
+  document.getElementById('wl-run-fields').style.display=isRun?'grid':'none';
+}
+function openWorkoutLogModal(wid){
+  const fit=getFitState();
+  const existing=wid?fit.workoutActual.find(w=>w.id===wid):null;
   document.getElementById('wl-modal').classList.add('open');
-  document.getElementById('wl-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('wl-duration').value='';
-  document.getElementById('wl-notes').value='';
+  document.getElementById('wl-modal').dataset.editId=wid||'';
   document.getElementById('wl-type').innerHTML=
-    WORKOUT_TYPES.map(t=>`<option value="${t.id}">${t.emoji} ${t.label}</option>`).join('');
+    WORKOUT_TYPES.map(t=>`<option value="${t.id}"${existing&&existing.type===t.id?' selected':''}>${t.emoji} ${t.label}</option>`).join('');
+  document.getElementById('wl-date').value=existing?existing.date:new Date().toISOString().split('T')[0];
+  document.getElementById('wl-duration').value=existing?.duration||'';
+  document.getElementById('wl-calories').value=existing?.calories||'';
+  document.getElementById('wl-distance').value=existing?.distance||'';
+  document.getElementById('wl-pace').value=existing?.pace||'';
+  document.getElementById('wl-notes').value=existing?.notes||'';
+  wlTypeChange();
 }
 function saveWorkoutLog(){
   const fit=getFitState();
-  fit.workoutActual.push({
-    id:uid('w'),
+  const editId=document.getElementById('wl-modal').dataset.editId;
+  const entry={
+    id:editId||uid('w'),
     date:document.getElementById('wl-date').value,
     type:document.getElementById('wl-type').value,
     duration:parseInt(document.getElementById('wl-duration').value)||null,
+    calories:parseInt(document.getElementById('wl-calories').value)||null,
+    distance:parseFloat(document.getElementById('wl-distance').value)||null,
+    pace:document.getElementById('wl-pace').value.trim(),
     notes:document.getElementById('wl-notes').value.trim(),
-  });
+  };
+  if(editId){
+    const idx=fit.workoutActual.findIndex(w=>w.id===editId);
+    if(idx>=0)fit.workoutActual[idx]=entry;
+  } else {
+    fit.workoutActual.push(entry);
+  }
   saveS();closeM('wl-modal');render();
 }
 
@@ -2522,14 +2556,21 @@ function startup(){
 <div class="modal-bg" id="wl-modal">
   <div class="modal">
     <div class="modal-title">Log a Workout</div>
-    <div class="fi"><div class="fi-label">Workout Type</div><select class="fi-input" id="wl-type"></select></div>
     <div class="fi-row">
+      <div class="fi"><div class="fi-label">Workout Type</div><select class="fi-input" id="wl-type" onchange="wlTypeChange()"></select></div>
       <div class="fi"><div class="fi-label">Date</div><input class="fi-input" type="date" id="wl-date"></div>
-      <div class="fi"><div class="fi-label">Duration (minutes, optional)</div><input class="fi-input" type="number" id="wl-duration" placeholder="e.g. 45" step="5"></div>
     </div>
-    <div class="fi"><div class="fi-label">Notes (optional)</div><input class="fi-input" id="wl-notes" placeholder="e.g. Zone 2, 3.5 miles, felt strong, PR, etc."></div>
+    <div class="fi-row">
+      <div class="fi"><div class="fi-label">Duration (minutes)</div><input class="fi-input" type="number" id="wl-duration" placeholder="e.g. 45" step="5"></div>
+      <div class="fi"><div class="fi-label">Calories burned</div><input class="fi-input" type="number" id="wl-calories" placeholder="e.g. 420" step="10"></div>
+    </div>
+    <div class="fi-row" id="wl-run-fields">
+      <div class="fi"><div class="fi-label">Distance (miles)</div><input class="fi-input" type="number" id="wl-distance" placeholder="e.g. 3.5" step="0.1"></div>
+      <div class="fi"><div class="fi-label">Avg pace (min/mile)</div><input class="fi-input" type="text" id="wl-pace" placeholder="e.g. 10:30"></div>
+    </div>
+    <div class="fi"><div class="fi-label">Notes</div><input class="fi-input" id="wl-notes" placeholder="e.g. Zone 2 easy, felt strong, hill repeats, etc."></div>
     <div style="background:rgba(45,190,140,0.07);border-radius:var(--radius-sm);padding:9px 12px;font-size:11px;color:var(--text2);margin-bottom:12px">
-      ✦ Quick-tap the type buttons on the Fitness tab to log instantly with today's date. Use this modal for past dates or to add notes.
+      ✦ Quick-tap the type buttons on the Fitness tab to log instantly with today's date. Use this modal for past dates or full details.
     </div>
     <div class="mf"><button class="btn btn-out" onclick="closeM('wl-modal')">Cancel</button><button class="btn btn-dark" onclick="saveWorkoutLog()">Save Workout</button></div>
   </div>
