@@ -364,6 +364,7 @@ select.fi-input{cursor:pointer;}
     <button class="btn btn-out btn-sm" onclick="showSyncSetup()" title="Configure Google Sheets sync">⚙ Sync</button>
     <button class="btn btn-out btn-sm" onclick="exportData()" title="Export all data as JSON">↑ Export</button>
     <button class="btn btn-out btn-sm" onclick="importData()" title="Import data from JSON">↓ Import</button>
+    <button class="btn btn-out btn-sm" onclick="showAIPlanImport()" title="Import AI/ML Platform learning plan" style="color:#a855f7;border-color:#a855f7">📚 AI Plan</button>
     <button class="btn btn-out btn-sm" onclick="go('review')">Weekly Review</button>
     <button class="btn btn-out btn-sm" onclick="openActModal()">+ Action</button>
     <button class="btn btn-dark btn-sm" onclick="openGoalModal()">+ Goal</button>
@@ -2224,6 +2225,72 @@ function importData(){
     reader.readAsText(file);
   };
   input.click();
+}
+
+// ─── AI/ML Platform Learning Plan Import ──────────────────────────
+function showAIPlanImport(){
+  const already=S.milestones.some(m=>m.name&&m.name.includes('OWASP LLM'));
+  const msg=already
+    ?'The AI/ML Platform learning plan has already been imported.\n\nRe-import anyway? (duplicates will be skipped)'
+    :'This will add 12 milestones and 16 actions to your Learning area covering:\n\n\u2022 AI platform infrastructure gaps (inference, evals, safety)\n\u2022 Platform contracts + API governance refresh\n\u2022 Voice/ASR vocabulary\n\u2022 Case studies: Uber Michelangelo, DoorDash ML\n\u2022 Projects: AI eval harness, lessons-learned docs\n\nAll items go to the Learning area. Ready to import?';
+  if(confirm(msg)) importAIPlan();
+}
+
+function importAIPlan(){
+  const gid=S.goals.find(g=>g.area==='growth')?.id||null;
+  const area='growth';
+
+  const milestones=[
+    {name:'Read AI Engineering (Chip Huyen) — inference + evals chapters done',due:'2026-04-26'},
+    {name:'OWASP LLM Top 10 completed',due:'2026-04-26'},
+    {name:'RAGAS quickstart tutorial done',due:'2026-04-26'},
+    {name:'Microsoft Presidio PII architecture reviewed',due:'2026-04-26'},
+    {name:'Uber Michelangelo + DoorDash ML platform case studies read',due:'2026-05-03'},
+    {name:'AI eval harness project v1 built (portfolio project #3)',due:'2026-05-03'},
+    {name:'Platform investment thesis mock doc written (1 page)',due:'2026-05-03'},
+    {name:'Voice/ASR vocabulary session done (Deepgram + AssemblyAI docs)',due:'2026-05-10'},
+    {name:'API versioning for ML models — study + notes done',due:'2026-05-10'},
+    {name:'Lessons learned written for all 3 AI projects',due:'2026-05-10'},
+    {name:'Cisco/AWS experience reframed in AI platform PM language',due:'2026-05-10'},
+    {name:'SageMaker background mapped to AI platform interview stories',due:'2026-05-12'},
+  ];
+
+  const actions=[
+    {name:'Read OWASP LLM Top 10',due:'2026-04-20',energy:'low',time:'1 hr',notes:'Short and interview-critical. Covers prompt injection, tenant isolation, PII risk — maps directly to interface.ai role requirements.'},
+    {name:'Read Chip Huyen AI Engineering — inference chapter',due:'2026-04-21',energy:'med',time:'3 hrs',notes:'KV cache, quantization (INT8/INT4), batching, speculative decoding — PM-level vocab for AI platform roles.'},
+    {name:'Do RAGAS quickstart tutorial (RAG eval framework)',due:'2026-04-22',energy:'med',time:'2 hrs',notes:'Industry standard RAG evaluation framework — hands-on. Install and run a basic eval pipeline.'},
+    {name:'Read Chip Huyen AI Engineering — evals chapter',due:'2026-04-23',energy:'med',time:'2 hrs',notes:'How to build golden test sets, regression pipelines, and task-specific evals for a banking assistant.'},
+    {name:'Read Microsoft Presidio docs — PII detection architecture',due:'2026-04-24',energy:'low',time:'1.5 hrs',notes:'Open source PII masking — what compliant AI platforms actually use. Understand the architecture.'},
+    {name:'Read Uber Michelangelo ML platform post',due:'2026-05-01',energy:'low',time:'1 hr',notes:'Best public writeup of what an AI platform PM owns. Maps to interface.ai "assess what exists, define what comes next" framing.'},
+    {name:'Read DoorDash ML platform blog series',due:'2026-05-02',energy:'low',time:'1 hr',notes:'Complements Michelangelo — platform consolidation, what to invest vs sunset decisions.'},
+    {name:'Write 1-page mock AI platform investment thesis',due:'2026-05-03',energy:'high',time:'2 hrs',notes:'What should a platform team own vs delegate? How to prevent platform becoming a feature factory? Crystallize this for interviews.'},
+    {name:'Build AI eval harness project',due:'2026-05-03',energy:'high',time:'4 hrs',notes:'Claude-powered app: takes test questions, runs against a prompt, scores outputs, tracks regression. Direct portfolio evidence for platform PM roles.'},
+    {name:'Write lessons learned doc for investing app',due:'2026-05-05',energy:'med',time:'1 hr',notes:'Where did LLM surprise you? What did you prompt-engineer around? What would you build differently? This becomes interview content.'},
+    {name:'Write lessons learned doc for Life OS app',due:'2026-05-05',energy:'med',time:'1 hr',notes:'Same framework — document what you learned building it, limitations encountered, design decisions made.'},
+    {name:'Read Deepgram + AssemblyAI developer docs (voice/ASR)',due:'2026-05-07',energy:'low',time:'1.5 hrs',notes:'Learn WER, streaming vs batch transcription, VAD — vocabulary for interface.ai voice platform ownership.'},
+    {name:'Watch 1 talk on real-time conversational AI latency',due:'2026-05-08',energy:'low',time:'1 hr',notes:'Daily.co or LiveKit have good ones. Key concept: E2E latency budget — ASR to LLM to TTS. Where are the bottlenecks?'},
+    {name:'Study API versioning patterns for ML model endpoints',due:'2026-05-09',energy:'med',time:'2 hrs',notes:'How do you deprecate a model endpoint without breaking consumers? Read Stripe API versioning docs as gold standard, then apply to model serving.'},
+    {name:'Reframe S3 PrivateLink + SOC2 work in AI platform security language',due:'2026-05-10',energy:'med',time:'1 hr',notes:'Map your existing credential to: prompt injection defense, tenant isolation in shared inference clusters, PII in context windows vs structured DB.'},
+    {name:'Practice AI platform investment thesis verbal answer (mock interview)',due:'2026-05-12',energy:'med',time:'1 hr',notes:'Platform ownership vs delegation, preventing feature factory, prioritizing competing internal consumers — should flow naturally.'},
+  ];
+
+  let msAdded=0,actAdded=0;
+  milestones.forEach(m=>{
+    if(!S.milestones.find(x=>x.name===m.name)){
+      S.milestones.push({id:uid('m'),name:m.name,goal:gid,area,due:m.due,done:false});
+      msAdded++;
+    }
+  });
+  actions.forEach(a=>{
+    if(!S.actions.find(x=>x.name===a.name)){
+      S.actions.push({id:uid('a'),name:a.name,goal:gid,area,energy:a.energy,due:a.due,time:a.time,notes:a.notes,done:false,source:'ai-plan'});
+      actAdded++;
+    }
+  });
+
+  saveS();renderSB();render();renderMobile();
+  showCoSR('\u2713 AI/ML Platform Plan imported \u2014 '+msAdded+' milestones + '+actAdded+' actions added to Learning');
+  go('milestones');
 }
 
 function showCoSR(msg){
