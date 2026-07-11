@@ -339,8 +339,6 @@ select.fi-input{cursor:pointer;}
   <div class="nav-item" id="nav-milestones" onclick="go('milestones')"><span>◈</span>Milestones<span class="nav-badge" id="bg-ms">0</span></div>
   <div class="nav-item" id="nav-quarterly" onclick="go('quarterly')"><span>◑</span>Quarterly Plan</div>
   <div class="nav-item" id="nav-fitness" onclick="go('fitness')"><span>🏃</span>Fitness Tracker</div>
-  <div class="nav-item" id="nav-pipeline" onclick="go('pipeline')"><span>🎯</span>Job Pipeline<span class="nav-badge" id="bg-pipe">0</span></div>
-  <div class="nav-item" id="nav-network" onclick="go('network')"><span>🤝</span>Network<span class="nav-badge" id="bg-net">0</span></div>
   <div class="nav-item" id="nav-actions" onclick="go('actions')"><span>◻</span>Actions<span class="nav-badge" id="bg-acts">0</span></div>
   <div class="nav-item" id="nav-review" onclick="go('review')"><span>◷</span>Weekly Review</div>
   <div class="nav-sec" style="margin-top:10px">Life Areas</div>
@@ -785,7 +783,7 @@ function renderSB(){
 // ─── Desktop views ────────────────────────────────────────────────
 function go(v){
   S.view=v;
-  const titles={dashboard:'Dashboard',goals:'Goals',milestones:'Milestones',actions:'Action Items',review:'Weekly Review',quarterly:'Quarterly Plan',fitness:'🏃 Fitness Tracker',briefing:'☀ Morning Briefing',pipeline:'🎯 Job Pipeline',network:'🤝 Network Tracker'};
+  const titles={dashboard:'Dashboard',goals:'Goals',milestones:'Milestones',actions:'Action Items',review:'Weekly Review',quarterly:'Quarterly Plan',fitness:'🏃 Fitness Tracker',briefing:'☀ Morning Briefing'};
   const aid=v.startsWith('area_')?v.replace('area_',''):null;
   document.getElementById('view-title').textContent=aid?`${ga(aid).emoji} ${ga(aid).label}`:(titles[v]||'');
   renderSB();render();
@@ -801,8 +799,6 @@ function render(){
   else if(v==='quarterly')rQuarterly(el);
   else if(v==='fitness')rFitness(el);
   else if(v==='briefing')rBriefing(el);
-  else if(v==='pipeline')rPipeline(el);
-  else if(v==='network')rNetwork(el);
   else if(v.startsWith('area_'))rArea(el,v.replace('area_',''));
 }
 
@@ -814,21 +810,10 @@ function rDash(el){
   const ums=S.milestones.filter(m=>!m.done&&m.due&&dd(m.due)<=21&&dd(m.due)>=0).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,6);
 
   // Intelligence signals
-  const offerDays=Math.ceil((new Date('2026-06-30')-new Date())/86400000);
+  const startDays=Math.ceil((new Date('2026-07-27')-new Date())/86400000);
   const cornellDays=Math.ceil((new Date('2026-08-15')-new Date())/86400000);
-  const pipeline=S.pipeline||[];
-  const network=S.network||[];
-  const activePipe=pipeline.filter(p=>p.status!=='Pass'&&p.status!=='Offer').length;
-  const advancedPipe=pipeline.filter(p=>['Screen','HM Interview','Final Round','Offer'].includes(p.status)).length;
-  const reactivated=network.filter(n=>n.status==='Connected'||n.status==='Done').length;
-  const netInProgress=network.filter(n=>n.status==='Messaged'||n.status==='Call Scheduled').length;
   const todayKey='briefing_'+new Date().toISOString().slice(0,10);
   const briefingDone=JSON.parse(localStorage.getItem(todayKey)||'[]').length>=5;
-
-  // Job search signal
-  const jobSignal=advancedPipe>=3?{c:'var(--health)',t:'🟢 On Track',s:`${advancedPipe} companies past screen`}:
-    advancedPipe>=1?{c:'var(--finance)',t:'🟡 Building',s:`${activePipe} active, ${advancedPipe} advanced`}:
-    {c:'#d93025',t:'🔴 Early Stage',s:`${activePipe} applied, none past screen yet`};
 
   el.innerHTML=`
     <div class="yr-banner">
@@ -839,20 +824,10 @@ function rDash(el){
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:18px">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer" onclick="go('pipeline')">
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Job Search</div>
-        <div style="font-size:13px;font-weight:500;color:${jobSignal.c};margin-bottom:2px">${jobSignal.t}</div>
-        <div style="font-size:11px;color:var(--text3)">${jobSignal.s}</div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer" onclick="go('pipeline')">
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Offer Deadline</div>
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:${offerDays<=30?'#d93025':offerDays<=60?'var(--finance)':'var(--text)'}">${offerDays}</div>
-        <div style="font-size:11px;color:var(--text3)">days to Jun 30</div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer" onclick="go('network')">
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Network</div>
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--health)">${reactivated}<span style="font-size:14px;color:var(--text3)">/20</span></div>
-        <div style="font-size:11px;color:var(--text3)">${netInProgress} in progress</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer" onclick="go('area_career')">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Google Start Date</div>
+        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:${startDays<=7?'#d93025':startDays<=21?'var(--finance)':'var(--career)'}">${startDays}</div>
+        <div style="font-size:11px;color:var(--text3)">days to Jul 27 · GDC Hardware</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Cornell Move-in</div>
@@ -1013,7 +988,7 @@ function rReview(el){
       <span style="font-size:11px;color:var(--career);cursor:pointer" onclick="openActForGoal('${g.id}')">Add action →</span>
     </div>`).join('')}`:''}
     <div class="sh" style="margin-top:18px"><div class="sh-title">Reflection prompts</div><div class="sh-line"></div></div>
-    ${['Is your job search moving fast enough for a June offer?','Which life area got the least attention this week?','Son leaves for Cornell in ~5 months — are you being present?','What would make next week a genuine win?'].map(q=>`
+    ${['Am I making real progress on Google pre-start prep?','Which life area got the least attention this week?','Son leaves for Cornell soon — am I being present?','What would make next week a genuine win?'].map(q=>`
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:7px">
       <div style="font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--text2);margin-bottom:4px">${q}</div>
       <div style="font-size:11px;color:var(--career);cursor:pointer" onclick="cosQ('${q.replace(/'/g,"\\'")}')">Ask CoS agent ↗</div>
@@ -1027,7 +1002,7 @@ const BRIEFING_CHECKS = [
   {id:'b1', label:'Inbox scanned', sub:'CoS pulled Gmail — action items identified'},
   {id:'b2', label:'Calendar reviewed', sub:"CoS showed today's events — prep noted for each"},
   {id:'b3', label:'Top 1–3 priorities set', sub:'What actually moves the needle today?'},
-  {id:'b4', label:'Job search follow-ups checked', sub:'Any applications hitting 7-day mark in tracker?'},
+  {id:'b4', label:'Google pre-start prep checked', sub:'Anything due this week on the transition plan?'},
   {id:'b5', label:'Actions captured to LifeOS', sub:'Everything from briefing logged here before closing CoS'},
 ];
 function rBriefing(el){
@@ -1083,248 +1058,6 @@ function getBriefingHistory(){
   return rows.length?rows.join(''):`<div style="font-size:12px;color:var(--text3);font-style:italic">No history yet — complete your first briefing today.</div>`;
 }
 
-// ─── Job Pipeline ─────────────────────────────────────────────────
-const PIPE_STATUSES=['Applied','Screen','HM Interview','Final Round','Offer','Pass'];
-const PIPE_COLORS={Applied:'var(--text3)',Screen:'var(--career)',HM_Interview:'var(--growth)','HM Interview':'var(--growth)',Final_Round:'var(--finance)','Final Round':'var(--finance)',Offer:'var(--health)',Pass:'#d93025'};
-
-function initPipeline(){
-  if(!S.pipeline||S.pipeline.length===0){
-    S.pipeline=[
-      {id:uid('p'),company:'Google',role:'Group Product Manager, Geo',source:'Referral',referral:true,referralName:'Mo Farhat',applied:'2026-03-24',status:'Applied',followUp:'2026-04-01',notes:'Mo submitted referral. ATS acknowledgement received.'},
-      {id:uid('p'),company:'Databricks',role:'Staff PM, AI Platform',source:'Direct Apply',referral:false,referralName:'',applied:'2026-03-24',status:'Applied',followUp:'2026-04-01',notes:'Applied via Greenhouse.'},
-      {id:uid('p'),company:'Scale AI',role:'',source:'Direct Apply',referral:false,referralName:'',applied:'2026-03-24',status:'Applied',followUp:'2026-04-01',notes:'Application submitted.'},
-    ];
-    saveS();
-  }
-}
-
-function rPipeline(el){
-  initPipeline();
-  const active=S.pipeline.filter(p=>p.status!=='Pass'&&p.status!=='Offer');
-  const closed=S.pipeline.filter(p=>p.status==='Pass'||p.status==='Offer');
-  const followSoon=S.pipeline.filter(p=>p.status!=='Pass'&&p.followUp&&dd(p.followUp)<=3&&dd(p.followUp)>=0);
-  const today=tod();
-
-  el.innerHTML=`<div style="max-width:780px">
-    <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-      ${[['Active',active.length,'var(--career)'],['With Referral',S.pipeline.filter(p=>p.referral).length,'var(--health)'],['Follow-up Soon',followSoon.length,followSoon.length?'var(--finance)':'var(--text3)'],['Total',S.pipeline.length,'var(--text3)']].map(([l,v,c])=>`
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;flex:1;min-width:100px">
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:${c}">${v}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">${l}</div>
-      </div>`).join('')}
-    </div>
-    ${followSoon.length?`<div style="background:rgba(230,184,48,0.08);border:1px solid var(--finance);border-radius:var(--radius);padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--text2)">⏰ Follow-up due: ${followSoon.map(p=>p.company).join(', ')}</div>`:''}
-    <div class="sh"><div class="sh-title">Active (${active.length})</div><div class="sh-line"></div><button class="sh-btn" onclick="openPipeModal()">+ Add Role</button></div>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
-      ${active.length?active.sort((a,b)=>PIPE_STATUSES.indexOf(b.status)-PIPE_STATUSES.indexOf(a.status)).map(p=>pipeCard(p)).join(''):`<div style="font-size:13px;color:var(--text3);padding:12px;font-style:italic">No active applications — add one above.</div>`}
-    </div>
-    ${closed.length?`<div class="sh"><div class="sh-title">Closed (${closed.length})</div><div class="sh-line"></div></div><div style="display:flex;flex-direction:column;gap:6px;opacity:.7">${closed.map(p=>pipeCard(p)).join('')}</div>`:''}
-  </div>`;
-  document.getElementById('bg-pipe').textContent=active.length||'';
-}
-
-function pipeCard(p){
-  const sc=PIPE_COLORS[p.status]||'var(--text3)';
-  const fu=p.followUp?dd(p.followUp):'';
-  const fuLabel=p.followUp?(fu<0?`<span style="color:#d93025">${Math.abs(fu)}d overdue</span>`:fu===0?`<span style="color:var(--finance)">follow up today</span>`:`<span style="color:var(--text3)">${fu}d</span>`):'';
-  return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px">
-    <div style="display:flex;align-items:flex-start;gap:12px">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
-          <span style="font-size:13px;font-weight:500">${p.company}</span>
-          ${p.referral?`<span style="font-size:10px;padding:1px 6px;background:rgba(45,190,140,0.12);color:var(--health);border-radius:4px">✓ referred${p.referralName?' by '+p.referralName:''}</span>`:''}
-          <span style="font-size:10px;padding:1px 7px;border-radius:4px;font-weight:500;background:${sc}22;color:${sc};margin-left:auto">${p.status}</span>
-        </div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${p.role||'Role TBD'}</div>
-        <div style="display:flex;gap:10px;font-size:11px;color:var(--text3);align-items:center">
-          <span>Applied ${p.applied}</span>
-          <span>·</span><span>${p.source}</span>
-          ${p.followUp?`<span>·</span><span>Follow up: ${fuLabel}</span>`:''}
-        </div>
-        ${p.notes?`<div style="font-size:11px;color:var(--text3);margin-top:5px;font-style:italic">${p.notes}</div>`:''}
-      </div>
-      <div style="display:flex;gap:6px;flex-shrink:0">
-        <select style="font-size:11px;padding:3px 6px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer" onchange="updatePipeStatus('${p.id}',this.value)">
-          ${PIPE_STATUSES.map(s=>`<option${s===p.status?' selected':''}>${s}</option>`).join('')}
-        </select>
-        <button class="btn btn-out btn-xs" onclick="openPipeEdit('${p.id}')">✎</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-let editingPipeId=null;
-function openPipeModal(){editingPipeId=null;resetPipeForm();openM('pipe-modal');}
-function openPipeEdit(id){
-  editingPipeId=id;
-  const p=S.pipeline.find(x=>x.id===id);if(!p)return;
-  document.getElementById('pi-company').value=p.company||'';
-  document.getElementById('pi-role').value=p.role||'';
-  document.getElementById('pi-source').value=p.source||'Direct Apply';
-  document.getElementById('pi-referral').checked=p.referral||false;
-  document.getElementById('pi-refname').value=p.referralName||'';
-  document.getElementById('pi-applied').value=p.applied||tod();
-  document.getElementById('pi-status').value=p.status||'Applied';
-  document.getElementById('pi-followup').value=p.followUp||'';
-  document.getElementById('pi-notes').value=p.notes||'';
-  openM('pipe-modal');
-}
-function resetPipeForm(){
-  ['pi-company','pi-role','pi-refname','pi-notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('pi-source').value='Direct Apply';
-  document.getElementById('pi-referral').checked=false;
-  document.getElementById('pi-applied').value=tod();
-  document.getElementById('pi-status').value='Applied';
-  document.getElementById('pi-followup').value=nfn(7);
-}
-function savePipeEntry(){
-  const entry={
-    id:editingPipeId||uid('p'),
-    company:document.getElementById('pi-company').value.trim(),
-    role:document.getElementById('pi-role').value.trim(),
-    source:document.getElementById('pi-source').value,
-    referral:document.getElementById('pi-referral').checked,
-    referralName:document.getElementById('pi-refname').value.trim(),
-    applied:document.getElementById('pi-applied').value,
-    status:document.getElementById('pi-status').value,
-    followUp:document.getElementById('pi-followup').value,
-    notes:document.getElementById('pi-notes').value.trim(),
-  };
-  if(!entry.company)return;
-  if(editingPipeId){S.pipeline=S.pipeline.map(p=>p.id===editingPipeId?entry:p);}
-  else{S.pipeline.push(entry);}
-  saveS();closeM('pipe-modal');rPipeline(document.getElementById('main'));
-}
-function updatePipeStatus(id,status){
-  const p=S.pipeline.find(x=>x.id===id);if(!p)return;
-  p.status=status;
-  saveS();rPipeline(document.getElementById('main'));
-}
-function deletePipeEntry(id){
-  if(!confirm('Remove this application?'))return;
-  S.pipeline=S.pipeline.filter(p=>p.id!==id);
-  saveS();rPipeline(document.getElementById('main'));
-}
-
-// ─── Network Tracker ──────────────────────────────────────────────
-const NET_STATUSES=['Not Contacted','Messaged','Call Scheduled','Connected','Done'];
-const NET_TIERS=['A','B','C'];
-
-function rNetwork(el){
-  if(!S.network)S.network=[];
-  const active=S.network.filter(n=>n.status!=='Done');
-  const done=S.network.filter(n=>n.status==='Done');
-  const reactivated=S.network.filter(n=>n.status==='Connected'||n.status==='Done').length;
-  const target=20;
-  const pct=Math.round(reactivated/target*100);
-
-  el.innerHTML=`<div style="max-width:760px">
-    <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-      ${[['Reactivated',reactivated+'/'+target,'var(--health)'],['In Progress',S.network.filter(n=>n.status==='Messaged'||n.status==='Call Scheduled').length,'var(--career)'],['A-Tier',S.network.filter(n=>n.tier==='A').length,'var(--finance)'],['Total',S.network.length,'var(--text3)']].map(([l,v,c])=>`
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;flex:1;min-width:100px">
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:${c}">${v}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">${l}</div>
-      </div>`).join('')}
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <span style="font-size:12px;color:var(--text2);font-weight:500">Apr 30 Goal: 20 reactivated</span>
-        <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3)">${reactivated}/${target}</span>
-      </div>
-      <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden">
-        <div style="height:100%;width:${Math.min(pct,100)}%;background:var(--health);border-radius:3px;transition:width .4s"></div>
-      </div>
-    </div>
-    <div class="sh"><div class="sh-title">Contacts (${active.length} active)</div><div class="sh-line"></div><button class="sh-btn" onclick="openNetModal()">+ Add Contact</button></div>
-    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      ${['All',...NET_TIERS,...NET_STATUSES].map(f=>`<button class="btn btn-out btn-xs" onclick="filterNet('${f}',this)" id="nf-${f.replace(' ','_')}">${f}</button>`).join('')}
-    </div>
-    <div id="net-list" style="display:flex;flex-direction:column;gap:7px;margin-bottom:20px">
-      ${active.length?active.sort((a,b)=>NET_TIERS.indexOf(a.tier)-NET_TIERS.indexOf(b.tier)).map(n=>netCard(n)).join(''):`<div style="font-size:13px;color:var(--text3);padding:12px;font-style:italic">No contacts yet — add from your Cisco/AWS network above.</div>`}
-    </div>
-    ${done.length?`<div class="sh"><div class="sh-title">✓ Done (${done.length})</div><div class="sh-line"></div></div><div style="display:flex;flex-direction:column;gap:6px;opacity:.65;margin-bottom:12px">${done.map(n=>netCard(n)).join('')}</div>`:''}
-  </div>`;
-  document.getElementById('bg-net').textContent=S.network.filter(n=>n.status==='Messaged'||n.status==='Call Scheduled').length||'';
-}
-
-function netCard(n){
-  const tierColors={A:'var(--finance)',B:'var(--career)',C:'var(--text3)'};
-  const tc=tierColors[n.tier]||'var(--text3)';
-  const statusColors={'Not Contacted':'var(--text3)',Messaged:'var(--career)','Call Scheduled':'var(--growth)',Connected:'var(--health)',Done:'var(--health)'};
-  const sc=statusColors[n.status]||'var(--text3)';
-  return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 15px" data-tier="${n.tier}" data-status="${n.status}">
-    <div style="display:flex;align-items:flex-start;gap:10px">
-      <div style="width:28px;height:28px;border-radius:50%;background:${tc}22;color:${tc};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px">${n.tier}</div>
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
-          <span style="font-size:13px;font-weight:500">${n.name}</span>
-          <span style="font-size:11px;color:var(--text3)">${n.company||''}</span>
-          <span style="font-size:10px;padding:1px 7px;border-radius:4px;font-weight:500;background:${sc}22;color:${sc};margin-left:auto">${n.status}</span>
-        </div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">${n.role||''}${n.connection?' · '+n.connection:''}</div>
-        ${n.notes?`<div style="font-size:11px;color:var(--text2);font-style:italic">${n.notes}</div>`:''}
-      </div>
-      <div style="display:flex;gap:5px;flex-shrink:0">
-        <select style="font-size:11px;padding:3px 6px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer" onchange="updateNetStatus('${n.id}',this.value)">
-          ${NET_STATUSES.map(s=>`<option${s===n.status?' selected':''}>${s}</option>`).join('')}
-        </select>
-        <button class="btn btn-out btn-xs" onclick="openNetEdit('${n.id}')">✎</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function filterNet(f, btn){
-  document.querySelectorAll('[id^="nf-"]').forEach(b=>b.style.fontWeight='');
-  btn.style.fontWeight='600';
-  const cards=document.querySelectorAll('#net-list > div[data-tier]');
-  cards.forEach(c=>{
-    const show=f==='All'||(NET_TIERS.includes(f)&&c.dataset.tier===f)||(NET_STATUSES.includes(f)&&c.dataset.status===f);
-    c.style.display=show?'':'none';
-  });
-}
-
-let editingNetId=null;
-function openNetModal(){editingNetId=null;resetNetForm();openM('net-modal');}
-function openNetEdit(id){
-  editingNetId=id;
-  const n=S.network.find(x=>x.id===id);if(!n)return;
-  document.getElementById('ni-name').value=n.name||'';
-  document.getElementById('ni-company').value=n.company||'';
-  document.getElementById('ni-role').value=n.role||'';
-  document.getElementById('ni-connection').value=n.connection||'';
-  document.getElementById('ni-tier').value=n.tier||'B';
-  document.getElementById('ni-status').value=n.status||'Not Contacted';
-  document.getElementById('ni-notes').value=n.notes||'';
-  openM('net-modal');
-}
-function resetNetForm(){
-  ['ni-name','ni-company','ni-role','ni-connection','ni-notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('ni-tier').value='B';
-  document.getElementById('ni-status').value='Not Contacted';
-}
-function saveNetEntry(){
-  const entry={
-    id:editingNetId||uid('n'),
-    name:document.getElementById('ni-name').value.trim(),
-    company:document.getElementById('ni-company').value.trim(),
-    role:document.getElementById('ni-role').value.trim(),
-    connection:document.getElementById('ni-connection').value.trim(),
-    tier:document.getElementById('ni-tier').value,
-    status:document.getElementById('ni-status').value,
-    notes:document.getElementById('ni-notes').value.trim(),
-  };
-  if(!entry.name)return;
-  if(!S.network)S.network=[];
-  if(editingNetId){S.network=S.network.map(n=>n.id===editingNetId?entry:n);}
-  else{S.network.push(entry);}
-  saveS();closeM('net-modal');rNetwork(document.getElementById('main'));
-}
-function updateNetStatus(id,status){
-  const n=S.network.find(x=>x.id===id);if(!n)return;
-  n.status=status;
-  saveS();renderSB();rNetwork(document.getElementById('main'));
-}
 
 // ─── Toggle ───────────────────────────────────────────────────────
 function togAct(id,e){e.stopPropagation();const a=S.actions.find(x=>x.id===id);if(a){a.done=!a.done;saveS();renderSB();render();renderMobile();}
@@ -1487,7 +1220,7 @@ function rMobileGoals(el){
 function rMobileCoS(el){
   el.innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Ask your personal CoS agent anything.</div>
   <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-    ${['What should I focus on today?','Am I on track for a June job offer?','What\'s overdue?','Which area needs attention?'].map(q=>`<div style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:14px;cursor:pointer;color:var(--text2)" onclick="mAsk('${q}')">${q} →</div>`).join('')}
+    ${['What should I focus on today?','Am I ready for my Google start date?','What\'s overdue?','Which area needs attention?'].map(q=>`<div style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:14px;cursor:pointer;color:var(--text2)" onclick="mAsk('${q}')">${q} →</div>`).join('')}
   </div>
   <div style="display:flex;gap:8px;margin-bottom:8px">
     <input style="flex:1;padding:11px 13px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;color:var(--text)" id="m-cos-in" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')mAsk()">
@@ -1559,14 +1292,14 @@ async function runCoS(q,respEl){
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:1000,
-        system:`You are a personal Chief of Staff AI — "Relaunch Year 2026". Key context: Felix Davis, searching for Principal/Director PM at B2B tech platform (Cisco/AWS background), target offer June 30; rebuilding fitness toward sprint triathlon; son starts Cornell August 2026; reactivating dormant Cisco/AWS network; building AI expertise through hands-on projects. Also tracking household/admin items.
+        model:'claude-sonnet-4-6',max_tokens:1000,
+        system:`You are a personal Chief of Staff AI — "Relaunch Year 2026". Key context: Felix Davis. Job search concluded July 2026 — joining Google as Group PM, Google Distributed Cloud (GDC) Hardware, reporting to Rohan Grover, target start July 27. Current Career focus is pre-start prep and first-30-days onboarding, not job search. Rebuilding fitness base after dropping off during the job search push (was strong through mid-May). Son starts Cornell August 2026 — family time deliberately reprioritized after a month focused on the search. Reactivating dormant Cisco/AWS network. Building AI expertise through hands-on projects. Also tracking household/admin items.
 
 Be direct, warm, specific. Max 100 words. Reference actual goals and timeline.
 
 If asked to add an action, respond ONLY with: ADD_ACTION:<name>|<area:career/health/family/finance/growth/social/admin>|<goal id or none>|<due days>|<energy:low/med/high>
 
-GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: ${new Date().toDateString()}. Son leaves Cornell ~5 months. Job offer target: June 30.`,
+GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: ${new Date().toDateString()}. Son leaves for Cornell in mid-August. Google start date: ~July 27.`,
         messages:[{role:'user',content:q}]
       })
     });
