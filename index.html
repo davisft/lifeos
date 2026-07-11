@@ -1560,17 +1560,6 @@ const WORKOUT_TYPES = [
   {id:'other',         label:'Other',            emoji:'⚡', color:'#64748b', source:'manual'},
 ];
 
-const B2B_PLAN = [
-  {label:'Wk 1', startDate:'2026-03-30', endDate:'2026-04-05', longRun:3.5,  totalMi:'7–8',   note:'Just get moving. Easy pace throughout.'},
-  {label:'Wk 2', startDate:'2026-04-06', endDate:'2026-04-12', longRun:4.0,  totalMi:'8–9',   note:'Spring break week — flexible days OK.'},
-  {label:'Wk 3', startDate:'2026-04-13', endDate:'2026-04-19', longRun:4.5,  totalMi:'9–10',  note:'Zone 2 only. If you can\'t talk, slow down.'},
-  {label:'Wk 4', startDate:'2026-04-20', endDate:'2026-04-26', longRun:5.0,  totalMi:'10–11', note:'First real distance week. Honor the taper instinct.'},
-  {label:'Wk 5', startDate:'2026-04-27', endDate:'2026-05-03', longRun:5.5,  totalMi:'11–12', note:'Toughest week mentally. Trust the plan.'},
-  {label:'Wk 6', startDate:'2026-05-04', endDate:'2026-05-10', longRun:6.0,  totalMi:'12–13', note:'You can see the finish line from here.'},
-  {label:'Wk 7', startDate:'2026-05-11', endDate:'2026-05-16', longRun:4.0,  totalMi:'8',     note:'TAPER WEEK. Easy runs only. Sleep more.'},
-  {label:'Wk 8', startDate:'2026-05-17', endDate:'2026-05-17', longRun:7.46, totalMi:'7.5',   note:'RACE DAY 🎽 Bay to Breakers'},
-];
-
 const BODY_TARGETS = [
   {period:'Baseline (Mar 24)', weight:201, bf:27.3, bmi:26.5, waist:40,   muscle:139},
   {period:'Q2 (Jun 30)',       weight:190, bf:23,   bmi:25.1, waist:37,   muscle:141},
@@ -1587,7 +1576,6 @@ const HR_ZONES = [
 ];
 
 const RACE_CALENDAR = [
-  {name:'Bay to Breakers',          date:'2026-05-17', mo:'MAY', day:'17', dist:'12k (7.5 mi)',      status:'rs-reg',     statusLabel:'✓ Registered', phase:'Phase 1'},
   {name:'SF Half Marathon',         date:'2026-07-26', mo:'JUL', day:'26', dist:'13.1 mi',           status:'rs-stretch', statusLabel:'Stretch goal',  phase:'Phase 2'},
   {name:'Pacific Grove Sprint Tri', date:'2026-09-13', mo:'SEP', day:'13', dist:'750m / 12mi / 3mi', status:'rs-target',  statusLabel:'Primary target',phase:'Phase 3'},
   {name:'Santa Cruz Sprint Tri',    date:'2026-09-20', mo:'SEP', day:'20', dist:'750m / 12mi / 3mi', status:'rs-open',    statusLabel:'Backup',        phase:'Phase 3'},
@@ -1609,14 +1597,6 @@ function getFitState(){
   if(!S.fitness.runLog) S.fitness.runLog=[];
   if(!S.fitness.workoutActual) S.fitness.workoutActual=[];
   return S.fitness;
-}
-
-function getCurrentB2BWeek(){
-  const now=new Date();
-  for(let i=B2B_PLAN.length-1;i>=0;i--){
-    if(now>=new Date(B2B_PLAN[i].startDate))return i;
-  }
-  return -1;
 }
 
 function getWeekDates(offsetWeeks=0){
@@ -1641,7 +1621,6 @@ function rFitness(el){
   const fit=getFitState();
   const todayStr=new Date().toISOString().split('T')[0];
   const weekDates=getWeekDates(0);
-  const b2bWeek=getCurrentB2BWeek();
   const latest=fit.bodyLog[fit.bodyLog.length-1];
   const baseline=fit.bodyLog[0];
   const weightDelta=latest.weight-baseline.weight;
@@ -1650,13 +1629,6 @@ function rFitness(el){
   const wkStart=weekDates[0],wkEnd=weekDates[6];
   const wkWorkouts=(fit.workoutActual||[]).filter(w=>w.date>=wkStart&&w.date<=wkEnd);
   wkDone=wkWorkouts.length;
-
-  const fmtRange=(s,e)=>{
-    const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const sd=new Date(s),ed=new Date(e);
-    if(s===e)return`${mo[sd.getMonth()]} ${sd.getDate()}`;
-    return`${mo[sd.getMonth()]} ${sd.getDate()} – ${mo[ed.getMonth()]} ${ed.getDate()}`;
-  };
 
   el.innerHTML=`
   <div class="sh"><div class="sh-title">Body Composition</div><div class="sh-line"></div><button class="sh-btn" onclick="openBodyLogModal()">+ Log Weight</button></div>
@@ -1758,29 +1730,6 @@ function rFitness(el){
     </div>`;
   })()}
 
-  <!-- B2B Run Progression with real calendar dates -->
-  <div class="sh"><div class="sh-title">Bay to Breakers — 8-Week Run Progression</div><div class="sh-line"></div><span style="font-size:11px;color:var(--health);font-family:'DM Mono',monospace">May 17 🎽</span></div>
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px">
-    <table class="run-prog-table" style="width:100%">
-      <thead><tr><th>Week</th><th>Dates</th><th>Long Run</th><th>Total Miles</th><th>Key Note</th></tr></thead>
-      <tbody>
-        ${B2B_PLAN.map((w,i)=>{
-          const isPast=new Date()>new Date(w.endDate)&&i<b2bWeek;
-          const isCurrent=i===b2bWeek;
-          const isRace=i===7;
-          const cls=isRace?'race-wk':isCurrent?'current-wk':isPast?'done-wk':'';
-          return`<tr class="${cls}">
-            <td style="font-weight:${isCurrent?600:400};color:${isCurrent?'var(--health)':'inherit'}">${w.label}${isCurrent?' ←':''}</td>
-            <td style="font-size:11px;color:${isCurrent?'var(--health)':'var(--text3)'}">${fmtRange(w.startDate,w.endDate)}</td>
-            <td>${isRace?'🎽 RACE':w.longRun+' mi'}</td>
-            <td>${w.totalMi} mi</td>
-            <td class="rpt-name" style="color:${isRace?'var(--career)':isCurrent?'var(--text)':'var(--text3)'}">${w.note}</td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>
-  </div>
-
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
     <div>
       <div class="sh"><div class="sh-title">Heart Rate Zones — Age 55</div><div class="sh-line"></div></div>
@@ -1827,7 +1776,7 @@ function rFitness(el){
   <div class="sh"><div class="sh-title">Training Phases — Full Year</div><div class="sh-line"></div></div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px">
     ${[
-      {phase:'Phase 1',dates:'Now → May 17',   goal:'Base building + Bay to Breakers',        color:'#2dbe8c',icon:'🏃'},
+      {phase:'Phase 1',dates:'Now → May 17',   goal:'Base building ✓ complete',        color:'#2dbe8c',icon:'🏃'},
       {phase:'Phase 2',dates:'May 18 → Jul 31',goal:'Build endurance + 10k race + bricks',    color:'#5b6af5',icon:'🚴'},
       {phase:'Phase 3',dates:'Aug 1 → Sep 30', goal:'Full tri prep → Sprint triathlon',        color:'#f0804a',icon:'🏊'},
       {phase:'Phase 4',dates:'Oct → Dec',       goal:'Maintain + reset + plan 2027',           color:'#a855f7',icon:'🎯'},
@@ -1882,24 +1831,19 @@ function rFitness(el){
       </div>
     </div>
     <div>
-      <div class="sh"><div class="sh-title">Weekly Run Log — B2B Prep</div><div class="sh-line"></div><button class="sh-btn" onclick="openRunLogModal()">+ Log Week</button></div>
+      <div class="sh"><div class="sh-title">Weekly Run Log</div><div class="sh-line"></div><button class="sh-btn" onclick="openRunLogModal()">+ Log Week</button></div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:11px 13px;margin-bottom:8px;font-size:11px;color:var(--text3);line-height:1.6">
         Total miles → Apple Fitness app → Activity → weekly distance<br>
         Long run → your Saturday run distance<br>
-        Log every Sunday. Compare to B2B plan above ↑
+        Log every Sunday.
       </div>
       ${fit.runLog&&fit.runLog.length?`
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
         <table class="comp-log" style="width:100%">
           <thead><tr><th>Week of</th><th>Total Miles</th><th>Long Run</th><th>Note</th></tr></thead>
           <tbody>${[...fit.runLog].reverse().map(e=>{
-            const b2bWk=B2B_PLAN.find(w=>w.startDate===e.weekOf);
-            const target=b2bWk?b2bWk.longRun:null;
-            const onTrack=target?e.longRun>=target*0.9:null;
             return`<tr><td>${e.weekOf}</td><td>${e.totalMiles} mi</td>
-              <td style="color:${onTrack===null?'inherit':onTrack?'var(--health)':'#d93025'};font-weight:500">
-                ${e.longRun} mi ${target?`<span style="font-size:9px;color:var(--text3)">(plan: ${target})</span>`:''}
-              </td>
+              <td style="font-weight:500">${e.longRun} mi</td>
               <td style="font-family:'DM Sans',sans-serif;color:var(--text2)">${e.note||'—'}</td></tr>`;
           }).join('')}
           </tbody>
@@ -2349,7 +2293,7 @@ function startup(){
       <div class="fi"><div class="fi-label">VO2 Max (mL/kg/min)</div><input class="fi-input" type="number" id="vt-vo2" placeholder="e.g. 38.5" step="0.1"></div>
       <div class="fi"><div class="fi-label">Resting Heart Rate (bpm)</div><input class="fi-input" type="number" id="vt-hr" placeholder="e.g. 62" step="1"></div>
     </div>
-    <div class="fi"><div class="fi-label">Note (optional)</div><input class="fi-input" id="vt-note" placeholder="e.g. After 4 weeks training, before Bay to Breakers, etc."></div>
+    <div class="fi"><div class="fi-label">Note (optional)</div><input class="fi-input" id="vt-note" placeholder="e.g. After 4 weeks training, before a race, etc."></div>
     <div class="mf"><button class="btn btn-out" onclick="closeM('vt-modal')">Cancel</button><button class="btn btn-dark" onclick="saveVitals()">Save Vitals</button></div>
   </div>
 </div>
