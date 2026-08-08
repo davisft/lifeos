@@ -810,7 +810,7 @@ function rDash(el){
   const ums=S.milestones.filter(m=>!m.done&&m.due&&dd(m.due)<=21&&dd(m.due)>=0).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,6);
 
   // Intelligence signals
-  const startDays=Math.ceil((new Date('2026-07-27')-new Date())/86400000);
+  const startDays=Math.ceil((new Date('2026-08-24')-new Date())/86400000);
   const cornellDays=Math.ceil((new Date('2026-08-15')-new Date())/86400000);
   const todayKey='briefing_'+new Date().toISOString().slice(0,10);
   const briefingDone=JSON.parse(localStorage.getItem(todayKey)||'[]').length>=5;
@@ -827,7 +827,7 @@ function rDash(el){
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer" onclick="go('area_career')">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Google Start Date</div>
         <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:${startDays<=7?'#d93025':startDays<=21?'var(--finance)':'var(--career)'}">${startDays}</div>
-        <div style="font-size:11px;color:var(--text3)">days to Jul 27 · GDC Hardware</div>
+        <div style="font-size:11px;color:var(--text3)">days to Aug 24 · Global Infrastructure</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Cornell Move-in</div>
@@ -1293,13 +1293,13 @@ async function runCoS(q,respEl){
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'claude-sonnet-4-6',max_tokens:1000,
-        system:`You are a personal Chief of Staff AI — "Relaunch Year 2026". Key context: Felix Davis. Job search concluded July 2026 — joining Google as Group PM, Google Distributed Cloud (GDC) Hardware, reporting to Rohan Grover, target start July 27. Current Career focus is pre-start prep and first-30-days onboarding, not job search. Rebuilding fitness base after dropping off during the job search push (was strong through mid-May). Son starts Cornell August 2026 — family time deliberately reprioritized after a month focused on the search. Reactivating dormant Cisco/AWS network. Building AI expertise through hands-on projects. Also tracking household/admin items.
+        system:`You are a personal Chief of Staff AI — "Relaunch Year 2026". Key context: Felix Davis. Job search concluded July 2026 — joining Google as Group PM (IC, not people management), Google Global Infrastructure (GGI), working on TUBE/Wholesale (Bandwidth-as-a-Service), reporting to Sanjib HomChaudhuri, target start Aug 24. Current Career focus is pre-start domain learning and first-90-days onboarding, not job search. Rebuilding fitness base after dropping off during the job search push (was strong through mid-May). Son starts Cornell August 2026 — family time deliberately reprioritized after a month focused on the search. Reactivating dormant Cisco/AWS network. Building AI expertise through hands-on projects. Also tracking household/admin items.
 
 Be direct, warm, specific. Max 100 words. Reference actual goals and timeline.
 
 If asked to add an action, respond ONLY with: ADD_ACTION:<name>|<area:career/health/family/finance/growth/social/admin>|<goal id or none>|<due days>|<energy:low/med/high>
 
-GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: ${new Date().toDateString()}. Son leaves for Cornell in mid-August. Google start date: ~July 27.`,
+GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: ${new Date().toDateString()}. Son leaves for Cornell in mid-August. Google start date: Aug 24.`,
         messages:[{role:'user',content:q}]
       })
     });
