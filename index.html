@@ -1439,7 +1439,8 @@ function rQuarterly(el){
   ];
   const today=new Date().toISOString().split('T')[0];
   let html='';
-  quarters.forEach(q=>{
+  const shown=quarters.filter(q=>today>=q.start&&today<=q.end);
+  (shown.length?shown:quarters.slice(-1)).forEach(q=>{
     const ms=S.milestones.filter(m=>m.due&&m.due>=q.start&&m.due<=q.end)
       .sort((a,b)=>a.due.localeCompare(b.due));
     const done=ms.filter(m=>m.done).length;
@@ -1475,7 +1476,7 @@ function rQuarterly(el){
     html+=`</div>`;
   });
   el.innerHTML=`
-    <div style="font-size:13px;color:var(--text2);margin-bottom:16px">All milestones grouped by quarter across every life area. Click any milestone to edit.</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px">This quarter's milestones across every life area. Click any milestone to edit.</div>
     ${html}`;
 }
 
