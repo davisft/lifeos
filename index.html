@@ -384,10 +384,10 @@ select.fi-input{cursor:pointer;}
     <div class="cos-label">✦ Personal CoS Agent</div>
     <div class="cos-chips">
       <div class="cos-chip" onclick="qa(this)">What's my focus this week?</div>
-      <div class="cos-chip" onclick="qa(this)">Am I on track for June offer?</div>
+      <div class="cos-chip" onclick="qa(this)">Am I on track with my 90-day plan?</div>
       <div class="cos-chip" onclick="qa(this)">Which area am I neglecting?</div>
       <div class="cos-chip" onclick="qa(this)">What's overdue?</div>
-      <div class="cos-chip" onclick="qa(this)">Son leaves in 5 months — am I present?</div>
+      <div class="cos-chip" onclick="qa(this)">How many workouts this week?</div>
     </div>
     <div class="cos-row">
       <input class="cos-in" id="cos-in" placeholder='Ask anything or add an action — "How is my fitness goal going?" or "Add: call financial advisor by Friday"' onkeydown="if(event.key==='Enter')sendCoS()">
@@ -810,8 +810,8 @@ function rDash(el){
   const ums=S.milestones.filter(m=>!m.done&&m.due&&dd(m.due)<=21&&dd(m.due)>=0).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,6);
 
   // Intelligence signals
-  const startDays=Math.ceil((new Date('2026-08-24')-new Date())/86400000);
-  const cornellDays=Math.ceil((new Date('2026-08-15')-new Date())/86400000);
+  const trotDays=Math.ceil((new Date('2026-11-26')-new Date())/86400000);
+  const nzDays=Math.ceil((new Date('2026-12-22')-new Date())/86400000);
   const todayKey='briefing_'+new Date().toISOString().slice(0,10);
   const briefingDone=JSON.parse(localStorage.getItem(todayKey)||'[]').length>=5;
 
@@ -824,15 +824,15 @@ function rDash(el){
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:18px">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer" onclick="go('area_career')">
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Google Start Date</div>
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:${startDays<=7?'#d93025':startDays<=21?'var(--finance)':'var(--career)'}">${startDays}</div>
-        <div style="font-size:11px;color:var(--text3)">days to Aug 24 · Global Infrastructure</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer" onclick="go('fitness')">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Turkey Trot</div>
+        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:${trotDays<=7?'#d93025':trotDays<=21?'var(--finance)':'var(--health)'}">${trotDays}</div>
+        <div style="font-size:11px;color:var(--text3)">days to Nov 26 · weekend runs count</div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px">
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Cornell Move-in</div>
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--family)">${cornellDays}</div>
-        <div style="font-size:11px;color:var(--text3)">days with your son</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer" onclick="go('area_family')">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">New Zealand</div>
+        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--family)">${nzDays}</div>
+        <div style="font-size:11px;color:var(--text3)">days to departure · Dec 22</div>
       </div>
     </div>
 
@@ -988,7 +988,7 @@ function rReview(el){
       <span style="font-size:11px;color:var(--career);cursor:pointer" onclick="openActForGoal('${g.id}')">Add action →</span>
     </div>`).join('')}`:''}
     <div class="sh" style="margin-top:18px"><div class="sh-title">Reflection prompts</div><div class="sh-line"></div></div>
-    ${['Am I making real progress on Google pre-start prep?','Which life area got the least attention this week?','Son leaves for Cornell soon — am I being present?','What would make next week a genuine win?'].map(q=>`
+    ${['Did I move the 90-day plan forward this week — what got decided?','How many workouts did I actually do vs. plan?','Which life area got the least attention this week?','What would make next week a genuine win?'].map(q=>`
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:7px">
       <div style="font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--text2);margin-bottom:4px">${q}</div>
       <div style="font-size:11px;color:var(--career);cursor:pointer" onclick="cosQ('${q.replace(/'/g,"\\'")}')">Ask CoS agent ↗</div>
@@ -1002,7 +1002,7 @@ const BRIEFING_CHECKS = [
   {id:'b1', label:'Inbox scanned', sub:'CoS pulled Gmail — action items identified'},
   {id:'b2', label:'Calendar reviewed', sub:"CoS showed today's events — prep noted for each"},
   {id:'b3', label:'Top 1–3 priorities set', sub:'What actually moves the needle today?'},
-  {id:'b4', label:'Google pre-start prep checked', sub:'Anything due this week on the transition plan?'},
+  {id:'b4', label:'90-day plan checked', sub:'Anything due this week on the GGI 90-day plan?'},
   {id:'b5', label:'Actions captured to LifeOS', sub:'Everything from briefing logged here before closing CoS'},
 ];
 function rBriefing(el){
@@ -1220,7 +1220,7 @@ function rMobileGoals(el){
 function rMobileCoS(el){
   el.innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Ask your personal CoS agent anything.</div>
   <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-    ${['What should I focus on today?','Am I ready for my Google start date?','What\'s overdue?','Which area needs attention?'].map(q=>`<div style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:14px;cursor:pointer;color:var(--text2)" onclick="mAsk('${q}')">${q} →</div>`).join('')}
+    ${['What should I focus on today?','Am I on track for the Turkey Trot?','What\'s overdue?','Which area needs attention?'].map(q=>`<div style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:14px;cursor:pointer;color:var(--text2)" onclick="mAsk('${q}')">${q} →</div>`).join('')}
   </div>
   <div style="display:flex;gap:8px;margin-bottom:8px">
     <input style="flex:1;padding:11px 13px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;color:var(--text)" id="m-cos-in" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')mAsk()">
@@ -1293,13 +1293,13 @@ async function runCoS(q,respEl){
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'claude-sonnet-4-6',max_tokens:1000,
-        system:`You are a personal Chief of Staff AI — "Relaunch Year 2026". Key context: Felix Davis. Job search concluded July 2026 — joining Google as Group PM (IC, not people management), Google Global Infrastructure (GGI), working on TUBE/Wholesale (Bandwidth-as-a-Service), reporting to Sanjib HomChaudhuri, target start Aug 24. Current Career focus is pre-start domain learning and first-90-days onboarding, not job search. Rebuilding fitness base after dropping off during the job search push (was strong through mid-May). Son starts Cornell August 2026 — family time deliberately reprioritized after a month focused on the search. Reactivating dormant Cisco/AWS network. Building AI expertise through hands-on projects. Also tracking household/admin items.
+        system:`You are a personal Chief of Staff AI — "Relaunch Year 2026". Key context: Felix Davis. Started at Google Global Infrastructure (GGI) in late August 2026, managing a team of 3 experienced PMs. Q4 career focus is winning the first six months: a 90-day plan agreed with his manager, faster team execution (triage stalled projects), a private GGI strategy as the visible win, an outbound customer/stakeholder rhythm, a PM-led 2027 autonomous network ops strategy, and a personal deep-dive on ML workloads. Fitness fell off in Q3; Q4 plan is morning Peloton/weights 3x/week ramping to 4-5, weekend runs, weekly tennis, Turkey Trot on Nov 26. Son is a freshman at Cornell; golf with daughter Skylar 2x/month; family New Zealand trip Dec 22 - Jan 3. Weekly review is Saturday mornings; monthly portfolio check-in first Saturday. Also tracking household/admin items.
 
 Be direct, warm, specific. Max 100 words. Reference actual goals and timeline.
 
 If asked to add an action, respond ONLY with: ADD_ACTION:<name>|<area:career/health/family/finance/growth/social/admin>|<goal id or none>|<due days>|<energy:low/med/high>
 
-GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: ${new Date().toDateString()}. Son leaves for Cornell in mid-August. Google start date: Aug 24.`,
+GOALS:\n${gs}\n\nUPCOMING MILESTONES:\n${ms}\n\nOPEN ACTIONS:\n${as}\n\nToday: ${new Date().toDateString()}. Turkey Trot: Nov 26. New Zealand departure: Dec 22.`,
         messages:[{role:'user',content:q}]
       })
     });
@@ -1576,9 +1576,8 @@ const HR_ZONES = [
 ];
 
 const RACE_CALENDAR = [
-  {name:'SF Half Marathon',         date:'2026-07-26', mo:'JUL', day:'26', dist:'13.1 mi',           status:'rs-stretch', statusLabel:'Stretch goal',  phase:'Phase 2'},
-  {name:'Pacific Grove Sprint Tri', date:'2026-09-13', mo:'SEP', day:'13', dist:'750m / 12mi / 3mi', status:'rs-target',  statusLabel:'Primary target',phase:'Phase 3'},
-  {name:'Santa Cruz Sprint Tri',    date:'2026-09-20', mo:'SEP', day:'20', dist:'750m / 12mi / 3mi', status:'rs-open',    statusLabel:'Backup',        phase:'Phase 3'},
+  {name:'Bay to Breakers',          date:'2026-05-17', mo:'MAY', day:'17', dist:'12k',               status:'rs-reg',     statusLabel:'Completed',     phase:'Phase 1'},
+  {name:'Turkey Trot',              date:'2026-11-26', mo:'NOV', day:'26', dist:'5k–10k',            status:'rs-target',  statusLabel:'Primary target',phase:'Phase 4'},
 ];
 
 const WEEK_TEMPLATE = [
@@ -1778,8 +1777,8 @@ function rFitness(el){
     ${[
       {phase:'Phase 1',dates:'Now → May 17',   goal:'Base building ✓ complete',        color:'#2dbe8c',icon:'🏃'},
       {phase:'Phase 2',dates:'May 18 → Jul 31',goal:'Build endurance + 10k race + bricks',    color:'#5b6af5',icon:'🚴'},
-      {phase:'Phase 3',dates:'Aug 1 → Sep 30', goal:'Full tri prep → Sprint triathlon',        color:'#f0804a',icon:'🏊'},
-      {phase:'Phase 4',dates:'Oct → Dec',       goal:'Maintain + reset + plan 2027',           color:'#a855f7',icon:'🎯'},
+      {phase:'Phase 3',dates:'Aug 1 → Sep 30', goal:'Paused — job start + Ithaca trips (tri deferred)', color:'#f0804a',icon:'🏊'},
+      {phase:'Phase 4',dates:'Oct → Dec',       goal:'Rebuild habit → Turkey Trot (Nov 26) → 4-5x/week', color:'#a855f7',icon:'🎯'},
     ].map(p=>`
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;border-top:2px solid ${p.color}">
       <div style="font-size:20px;margin-bottom:5px">${p.icon}</div>
